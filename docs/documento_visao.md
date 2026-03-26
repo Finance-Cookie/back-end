@@ -229,6 +229,30 @@ erDiagram
 
 #### Descrição das Entidades
 
+📦 Produto
+
+Representa os itens comercializados pela empresa, contendo informações como nome, descrição e valor.
+
+🧾 Venda
+
+Representa a comercialização de produtos para um cliente, registrando dados como itens vendidos, valores, forma de pagamento, descontos e frete.
+
+🛒 Compra
+
+Representa a aquisição de insumos ou produtos pela empresa, incluindo informações de valores, itens, forma de pagamento e descrição.
+
+👤 Cliente
+
+Representa os clientes da empresa, armazenando dados de identificação e contato, como nome, telefone e endereço.
+
+💰 Entrada
+
+Representa valores que entram no caixa da empresa, como receitas diversas, contendo informações de data, valor, descrição, forma de pagamento e tipo.
+
+💸 Saída
+
+Representa valores que saem do caixa da empresa, como despesas, incluindo data, valor, descrição, forma de pagamento e tipo.
+
 ## Lista de Requisitos Não-Funcionais
 
 Requisito                                 | Descrição   |
