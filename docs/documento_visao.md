@@ -28,9 +28,14 @@ Pedro       | Desenvolvedor FullStack, React Native, Django, Python, Axios, HTML
 O sistema será utilizado apenas por um usuário administrador.
 
 Perfil Administrativo
-    Este perfil corresponde ao usuário responsável pela gestão completa do sistema. Todos os módulos disponíveis na aplicação poderão ser acessados, podendo realizar operações de cadastro, exclusão, edição e visualização de informações.
-    Entre suas principais funcionalidades está o gerenciamento das entradas financeiras, registrando as vendas diárias do negócio ou recebimentos provenientes de outras fontes. Também será responsável pelo controle das saídas financeiras, como despesas, compras, equipamentos, e custos operacionais.
-    Além disso, o administrador desempenha a função de cadastrar e gerenciar os produtos da empresa, incluindo seus custos de produção e os valores de venda, informações importantes para o controle financeiro. Outro módulo relevante para o gerenciamento do negócio é módulo clientes, onde o administrador poderá cadastrar, editar, excluir ou consultar informações acerca dos consumidores; auxiliando no controle de vendas, histórico de pedidos e relacionamento com os clientes.
+
+---
+
+Este perfil corresponde ao usuário responsável pela gestão completa do sistema. Todos os módulos disponíveis na aplicação poderão ser acessados, podendo realizar operações de cadastro, exclusão, edição e visualização de informações.
+
+Entre suas principais funcionalidades está o gerenciamento das entradas financeiras, registrando as vendas diárias do negócio ou recebimentos provenientes de outras fontes. Também será responsável pelo controle das saídas financeiras, como despesas, compras, equipamentos, e custos operacionais.
+
+Além disso, o administrador desempenha a função de cadastrar e gerenciar os produtos da empresa, incluindo seus custos de produção e os valores de venda, informações importantes para o controle financeiro. Outro módulo relevante para o gerenciamento do negócio é módulo clientes, onde o administrador poderá cadastrar, editar, excluir ou consultar informações acerca dos consumidores; auxiliando no controle de vendas, histórico de pedidos e relacionamento com os clientes.
 
 ## Lista de Requisitos Funcionais
 
@@ -157,6 +162,70 @@ RF10.02 - Acessar Relatório      | Visualiza detalhadamente um relatório espec
 
 ### Modelo Conceitual
 
+Esse é o modelo conceitual do projeto, desenvolvido usando **Mermaid**.
+
+```mermaid
+erDiagram
+    PRODUTO {
+        string id PK
+        string nome
+        string valor
+        string descricao
+    }
+
+    VENDA {
+        string id PK
+        string data
+        string valorTotal
+        string frete
+        string desconto
+        string formaPagamento
+        string tipo
+    }
+
+    COMPRA {
+        string id PK
+        string data
+        string valorTotal
+        string descricao
+        string frete
+        string desconto
+        string formaPagamento
+        string tipo
+    }
+
+    CLIENTE {
+        string id PK
+        string nome
+        string telefone
+        string logradouro
+        string bairro
+        string numero
+    }
+
+    ENTRADA {
+        string id PK
+        string data
+        string valorTotal
+        string descricao
+        string formaPagamento
+        string tipo
+    }
+
+    SAIDA {
+        string id PK
+        string data
+        string valorTotal
+        string descricao
+        string formaPagamento
+        string tipo
+    }
+
+    %% Relacionamentos (modelo simples)
+    CLIENTE ||--o{ VENDA : realiza
+    VENDA ||--o{ PRODUTO : possui
+
+```
 
 #### Descrição das Entidades
 
