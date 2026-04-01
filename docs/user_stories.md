@@ -13,6 +13,7 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | Data       | Versão  | Descrição                          | Autor                          |
 | :--------- | :-----: | :--------------------------------: | :----------------------------- |
 | 26/03/2026 | 0.0.1   | Documento Inicial  | Elder |
+| 26/03/2026 | 0.0.2   | Documento Inicial  | Pedro |
 
 
 ### User Story US01 - Manter Usuário
@@ -45,3 +46,36 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA01.03** | O usuário informa, na tela Login, os dados para logar incorretamente, ao clicar em Entrar ele é notificado com uma mensagem de erro. Mensagem: Informações incorretas, tente novamente. |
 | **TA01.04** | O usuário informa, na tela Login, os dados para logar corretamente, ao clicar em Entrar ele é encaminhado para a tela principal do sistema. É exibida a Mensagem: Login realizado com sucesso. |
 | **TA01.05** | O usuário, na tela Inicial, ao clicar no ícone do perfil é direcionado à tela do Perfil. Ao clicar em Editar ele poderá editar suas informações pessoais (Nome, E-mail, Senha). Ao editar, clica em Salvar e uma Mensagem é exibida: Dados salvos com sucesso! |
+
+
+### User Story US02 - Manter Produto
+
+:------------------------------------------------------------- |
+| **Descrição** | O sistema deve permitir manter o cadastro de produtos. Para cadastro, os atributos são: Nome, Descrição e Valor. Os produtos poderam ser incluídos, alterados, listados, visualizados e excluídos. |
+
+| **Requisitos envolvidos** |                |
+| ------------------------- | :------------- |
+| RF05                      | Manter Produto |
+
+|                         |           |
+| ----------------------- | --------- |
+| **Prioridade**          | Essencial |
+| **Estimativa**          | 6 h       |
+| **Tempo Gasto (real):** |           |
+| **Tamanho Funcional**   | 5 PF      |
+| **Analista**            | Elder     |
+| **Desenvolvedor**       | Pedro     |
+| **Revisor**             | Felipe    |
+| **Testador**            | Elder     |
+
+---
+
+| Testes de Aceitação (TA) |                                                                                                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Código**               | **Descrição**                                                                                                                                      |
+| **TA02.01**              | São informados Nome, Descrição e Valor na tela de cadastro de produto e clicado em Salvar. O sistema exibe: Produto cadastrado com sucesso! |
+| **TA02.02**              | São informados dados inválidos ou incompletos e clicado em Salvar. O sistema exibe: Informações incorretas, tente novamente!                |
+| **TA02.03**              | A listagem de produtos é acessada e todos os produtos cadastrados são visualizados.                                                           |
+| **TA02.04**              | Um produto é selecionado e seus detalhes (Nome, Descrição e Valor) são visualizados.                                                |
+| **TA02.05**              | Os dados de um produto são alterados e clicado em Salvar. O sistema exibe: Produto atualizado com sucesso!                                  |
+| **TA02.06**              | Um produto é excluído e o sistema exibe: Produto excluído com sucesso!                                                                 |
