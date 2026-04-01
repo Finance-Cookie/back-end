@@ -19,14 +19,12 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 ### User Story US01 - Manter Usuário
 
 
-:------------------------------------------------------------- |
 | **Descrição** | O sistema deve manter o cadastro de usuário que tem acesso ao sistema via login e senha. Seus atributos para cadastro são: Nome, E-mail, Senha. Seu cadastro também deverá ter suas informações monetárias, os valores que atualmente estão em caixa (físico e/ou online). Para o login serão usados o E-mail e a Senha, permitindo o usuário acessar todos os módulos do sistema. |
 
 | **Requisitos envolvidos** |                                                    |
 | ------------- | :------------------------------------------------------------- |
 | RF08          | Manter Usuário Administrador |
 
-|                           |                                     |
 | ------------------------- | ----------------------------------- | 
 | **Prioridade**            | Essencial                           | 
 | **Estimativa**            | 8 h                                 | 
@@ -50,14 +48,12 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 
 ### User Story US02 - Manter Produto
 
-:------------------------------------------------------------- |
 | **Descrição** | O sistema deve permitir manter o cadastro de produtos. Para cadastro, os atributos são: Nome, Descrição e Valor. Os produtos poderam ser incluídos, alterados, listados, visualizados e excluídos. |
 
 | **Requisitos envolvidos** |                |
 | ------------------------- | :------------- |
 | RF05                      | Manter Produto |
 
-|                         |           |
 | ----------------------- | --------- |
 | **Prioridade**          | Essencial |
 | **Estimativa**          | 6 h       |
@@ -79,3 +75,37 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA02.04**              | Um produto é selecionado e seus detalhes (Nome, Descrição e Valor) são visualizados.                                                |
 | **TA02.05**              | Os dados de um produto são alterados e clicado em Salvar. O sistema exibe: Produto atualizado com sucesso!                                  |
 | **TA02.06**              | Um produto é excluído e o sistema exibe: Produto excluído com sucesso!                                                                 |
+
+
+
+
+### User Story US03 - Manter Entrada
+
+
+| **Descrição** | O sistema deve permitir o gerenciamento de entradas financeiras, possibilitando ao administrador registrar, visualizar, alterar, listar e excluir entradas. Cada entrada possui os seguintes atributos: Data, Valor Total, Descrição, Forma de Pagamento e Tipo de Entrada. O sistema deve garantir o controle adequado dessas informações para apoiar a gestão financeira da empresa. |
+
+| **Requisitos envolvidos** |                                                    |
+| ------------- | :------------------------------------------------------------- |
+| RF01          | Manter Entrada |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 6 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 5 PF                                | 
+| **Analista**              | Elder                               | 
+| **Desenvolvedor**         | Felipe                               | 
+| **Revisor**               | Elder                              | 
+| **Testador**              | Pedro                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA03.01** | O administrador informa os dados da entrada (Data, Valor Total, Descrição, Forma de Pagamento e Tipo) corretamente e clica em Salvar. O sistema exibe a mensagem: Entrada cadastrada com sucesso! |
+| **TA03.02** | O administrador informa dados inválidos ou incompletos ao cadastrar uma entrada e clica em Salvar. O sistema exibe a mensagem: Informações inválidas, tente novamente! |
+| **TA03.03** | O administrador acessa a listagem de entradas e visualiza todas as entradas cadastradas, podendo aplicar filtros por Data, Forma de Pagamento e Tipo. |
+| **TA03.04** | O administrador seleciona uma entrada para visualizar e o sistema exibe todas as informações detalhadas da entrada. |
+| **TA03.05** | O administrador edita uma entrada existente, altera os dados permitidos e clica em Salvar. O sistema exibe a mensagem: Entrada atualizada com sucesso! |
+| **TA03.06** | O administrador exclui uma entrada no mesmo dia de cadastro (até 23h59) e o sistema exibe a mensagem: Entrada excluída com sucesso! |
+| **TA03.07** | O administrador tenta excluir uma entrada após o prazo permitido e o sistema exibe a mensagem: Não é possível excluir esta entrada após o prazo permitido. |
