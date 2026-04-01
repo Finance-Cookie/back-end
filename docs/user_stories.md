@@ -77,8 +77,6 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA02.06**              | Um produto é excluído e o sistema exibe: Produto excluído com sucesso!                                                                 |
 
 
-
-
 ### User Story US03 - Manter Entrada
 
 
@@ -109,3 +107,35 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA03.05** | O administrador edita uma entrada existente, altera os dados permitidos e clica em Salvar. O sistema exibe a mensagem: Entrada atualizada com sucesso! |
 | **TA03.06** | O administrador exclui uma entrada no mesmo dia de cadastro (até 23h59) e o sistema exibe a mensagem: Entrada excluída com sucesso! |
 | **TA03.07** | O administrador tenta excluir uma entrada após o prazo permitido e o sistema exibe a mensagem: Não é possível excluir esta entrada após o prazo permitido. |
+
+
+### User Story US04 - Manter Saída
+
+
+| **Descrição** | O sistema deve permitir o gerenciamento de saídas financeiras, possibilitando ao administrador registrar, visualizar, alterar, listar e excluir saídas. Cada saída possui os seguintes atributos: Data, Valor Total, Descrição, Forma de Pagamento e Tipo da Saída. O sistema deve garantir o controle adequado dessas informações para apoiar a gestão financeira da empresa. |
+
+| **Requisitos envolvidos** |                                                    |
+| ------------- | :------------------------------------------------------------- |
+| RF03          | Manter Saída |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 6 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 5 PF                                | 
+| **Analista**              | Felipe                               | 
+| **Desenvolvedor**         | Elder                               | 
+| **Revisor**               | Felipe                              | 
+| **Testador**              | Pedro                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA04.01** | O administrador informa os dados da saída (Data, Valor Total, Descrição, Forma de Pagamento e Tipo) corretamente e clica em Salvar. O sistema exibe a mensagem: Saída cadastrada com sucesso! |
+| **TA04.02** | O administrador informa dados inválidos ou incompletos ao cadastrar uma saída e clica em Salvar. O sistema exibe a mensagem: Informações inválidas, tente novamente! |
+| **TA04.03** | O administrador acessa a listagem de saídas e visualiza todas as saídas cadastradas, podendo aplicar filtros por Data, Forma de Pagamento e Tipo. |
+| **TA04.04** | O administrador seleciona uma saída para visualizar e o sistema exibe todas as informações detalhadas da saída. |
+| **TA04.05** | O administrador edita uma saída existente, altera os dados permitidos e clica em Salvar. O sistema exibe a mensagem: Saída atualizada com sucesso! |
+| **TA04.06** | O administrador exclui uma saída no mesmo dia de cadastro (até 23h59) e o sistema exibe a mensagem: Saída excluída com sucesso! |
+| **TA04.07** | O administrador tenta excluir uma saída após o prazo permitido e o sistema exibe a mensagem: Não é possível excluir esta saída após o prazo permitido. |
