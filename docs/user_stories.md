@@ -139,3 +139,34 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA04.05** | O administrador edita uma saída existente, altera os dados permitidos e clica em Salvar. O sistema exibe a mensagem: Saída atualizada com sucesso! |
 | **TA04.06** | O administrador exclui uma saída no mesmo dia de cadastro (até 23h59) e o sistema exibe a mensagem: Saída excluída com sucesso! |
 | **TA04.07** | O administrador tenta excluir uma saída após o prazo permitido e o sistema exibe a mensagem: Não é possível excluir esta saída após o prazo permitido. |
+
+
+### User Story US07 - Manter Tipo
+
+
+| **Descrição** | O sistema deve permitir o gerenciamento de tipos (categorias) utilizados para classificar entradas, saídas, vendas ou compras. Cada tipo possui como atributo o Nome. O sistema deve permitir incluir, alterar, listar, visualizar e excluir tipos, garantindo a organização das movimentações financeiras. |
+
+| **Requisitos envolvidos** |                                                    |
+| ------------- | :------------------------------------------------------------- |
+| RF06          | Manter Tipo |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 4 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 4 PF                                | 
+| **Analista**              | Elder                               | 
+| **Desenvolvedor**         | Pedro                               | 
+| **Revisor**               | Felipe                              | 
+| **Testador**              | Elder                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA05.01** | O administrador informa o Nome do tipo corretamente na tela de cadastro e clica em Salvar. O sistema exibe: Tipo cadastrado com sucesso! |
+| **TA05.02** | O administrador informa dados inválidos ou deixa o Nome em branco e clica em Salvar. O sistema exibe: Informações incorretas, tente novamente! |
+| **TA05.03** | O administrador informa dados inválidos, repetidos ou deixa o Nome em branco e clica em Salvar. O sistema exibe: Informações incorretas, tente novamente! |
+| **TA05.04** | O administrador seleciona um tipo e visualiza seus detalhes (Nome). |
+| **TA05.05** | O administrador altera o Nome de um tipo existente e clica em Salvar. O sistema exibe: Tipo atualizado com sucesso! |
+| **TA05.06** | O administrador exclui um tipo e o sistema exibe: Tipo excluído com sucesso!|
