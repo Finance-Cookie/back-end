@@ -170,3 +170,31 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA05.04** | O administrador seleciona um tipo e visualiza seus detalhes (Nome). |
 | **TA05.05** | O administrador altera o Nome de um tipo existente e clica em Salvar. O sistema exibe: Tipo atualizado com sucesso! |
 | **TA05.06** | O administrador exclui um tipo e o sistema exibe: Tipo excluído com sucesso!|
+
+
+### User Story US10 - Manter Relatório
+
+
+| **Descrição** | O sistema deve permitir a visualização de relatórios que apresentam dados consolidados por setor do sistema. O administrador poderá visualizar relatórios gerais e acessar relatórios específicos com informações detalhadas, auxiliando na análise e tomada de decisão. |
+
+| **Requisitos envolvidos** |                                                    |
+| ------------- | :------------------------------------------------------------- |
+| RF10          | Manter Relatório |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 4 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 5 PF                                | 
+| **Analista**              | Elder                               | 
+| **Desenvolvedor**         | Felipe                               | 
+| **Revisor**               | Pedro                              | 
+| **Testador**              | Elder                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA05.01** | O administrador acessa a área de relatórios e visualiza os relatórios disponíveis por setor do sistema. |
+| **TA05.02** | O administrador seleciona um setor específico e o sistema exibe todos os relatórios daquele setor. |
+| **TA05.02** | O administrador seleciona um relatório específico e o sistema exibe suas informações detalhadas corretamente. |
