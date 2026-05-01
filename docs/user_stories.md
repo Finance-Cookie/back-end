@@ -140,6 +140,36 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA04.06** | O administrador exclui uma saída no mesmo dia de cadastro (até 23h59) e o sistema exibe a mensagem: Saída excluída com sucesso! |
 | **TA04.07** | O administrador tenta excluir uma saída após o prazo permitido e o sistema exibe a mensagem: Não é possível excluir esta saída após o prazo permitido. |
 
+### User Story US05 - Manter Venda
+
+
+| **Descrição** | O sistema deve permitir o gerenciamento de vendas, possibilitando ao administrador realizar a inclusão de vendas associadas a clientes, além de alterar, listar, visualizar e excluir registros. O sistema deve calcular automaticamente o valor total com base nos itens, frete e descontos, e aplicar a regra restritiva de exclusão apenas no dia da operação. |
+
+| **Requisitos envolvidos** |                                                     |
+| ------------- | :------------------------------------------------------------- |
+| RF02          | Manter Venda |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 8 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 8 PF                                | 
+| **Analista**              | Elder                               | 
+| **Desenvolvedor**         | Pedro                               | 
+| **Revisor**               | Felipe                              | 
+| **Testador**              | Elder                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA05.01** | O administrador informa os dados da venda (Data, Cliente, Itens, Forma de Pagamento, Desconto, Frete e Tipo) e clica em Salvar. O sistema calcula o Valor Total e exibe: Venda realizada com sucesso! |
+| **TA05.02** | O administrador altera itens, desconto ou frete de uma venda e o sistema recalcula o Valor Total automaticamente antes de salvar as alterações. |
+| **TA05.03** | O administrador acessa a listagem de vendas e aplica filtros por Data, Cliente, Forma de Pagamento ou Tipo, visualizando apenas os resultados correspondentes. |
+| **TA05.04** | O administrador seleciona uma venda para visualizar e o sistema exibe detalhadamente todos os dados, incluindo a lista de itens vendidos e o cliente associado. |
+| **TA05.05** | O administrador solicita a exclusão de uma venda realizada no mesmo dia (até as 23h59) e o sistema exibe a mensagem: Venda excluída com sucesso! |
+| **TA05.06** | O administrador tenta excluir uma venda realizada em data anterior à atual e o sistema exibe a mensagem: Não é possível excluir esta venda após o prazo permitido. |
+
 
 ### User Story US07 - Manter Tipo
 
