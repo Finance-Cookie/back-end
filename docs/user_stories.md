@@ -171,6 +171,37 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA05.05** | O administrador altera o Nome de um tipo existente e clica em Salvar. O sistema exibe: Tipo atualizado com sucesso! |
 | **TA05.06** | O administrador exclui um tipo e o sistema exibe: Tipo excluído com sucesso!|
 
+### User Story US08 - Manter Cliente
+
+
+| **Descrição** | O sistema deve permitir o gerenciamento de clientes, possibilitando ao administrador cadastrar, visualizar, alterar, listar e excluir clientes. Cada cliente possui os seguintes atributos: Nome, Telefone e Endereço (Logradouro, Bairro e Número). O sistema deve oferecer facilidades de busca e ordenação para otimizar o atendimento e a gestão da base de contatos. |
+
+| **Requisitos envolvidos** |                                                     |
+| ------------- | :------------------------------------------------------------- |
+| RF07          | Manter Cliente |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 6 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 6 PF                                | 
+| **Analista**              | Pedro                               | 
+| **Desenvolvedor**         | Elder                               | 
+| **Revisor**               | Felipe                              | 
+| **Testador**              | Pedro                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA08.01** | O administrador informa os dados do cliente (Nome, Telefone e Endereço completo) corretamente e clica em Salvar. O sistema exibe a mensagem: Cliente cadastrado com sucesso! |
+| **TA08.02** | O administrador deixa campos obrigatórios em branco ou informa dados inválidos e clica em Salvar. O sistema exibe a mensagem: Informações incorretas, tente novamente! |
+| **TA08.03** | O administrador acessa a listagem de clientes e visualiza todos os registros, podendo utilizar o filtro alfabético para ordenação. |
+| **TA08.04** | O administrador utiliza o campo de pesquisa na listagem de clientes e o sistema retorna apenas os resultados que condizem com o termo pesquisado. |
+| **TA08.05** | O administrador seleciona um cliente para visualizar e o sistema exibe detalhadamente o Nome, Telefone e o Endereço (Logradouro, Bairro e Número). |
+| **TA08.06** | O administrador edita os dados de um cliente existente (Nome, Telefone ou Endereço) e clica em Salvar. O sistema exibe a mensagem: Dados do cliente atualizados com sucesso! |
+| **TA08.07** | O administrador solicita a exclusão de um cliente e, após confirmação, o sistema exibe a mensagem: Cliente excluído com sucesso! |
+
 
 ### User Story US10 - Manter Relatório
 
