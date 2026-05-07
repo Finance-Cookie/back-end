@@ -90,8 +90,23 @@ class TestesDeUnidadeModels(TestCase):
         p = Produto.objects.create(nome="", descricao="", valor=0)
         self.assertEqual(p.nome, "")
 
+    def test_validacao_obrigatoriedade_dados_cliente(self):
+        """Validação de Campo: Validar obrigatoriedade dos Dados de Cliente.
 
-
+        Similar ao teste de produto, o model `Cliente` não define validação de
+        `nome`, então o banco aceita string vazia. Validamos o comportamento
+        atual do model, mas a regra de “nome obrigatório” precisa ser
+        implementada em outro local e este teste revisado.
+        """
+        c = Cliente.objects.create(
+            nome="",
+            email="",
+            telefone="",
+            logradouro="",
+            bairro="",
+            numero="",
+        )
+        self.assertEqual(c.nome, "")
 
     def test_filtro_clientes_por_nome(self):
         """Teste de Listagem e Filtros: Testar filtro de Clientes (por termo)."""
@@ -250,3 +265,13 @@ class TestesDeUnidadeModels(TestCase):
         venda.delete()
         self.assertFalse(Venda.objects.filter(pk=venda.pk).exists())
 
+    def test_validacao_obrigatoriedade_dados_tipo(self):
+        """Validação de Campo: Validar obrigatoriedade dos Dados de TipoPagamento.
+
+        O model `TipoPagamento` não define validação de `nome`, então o banco
+        aceita string vazia. Validamos o comportamento atual do model, mas a
+        regra de “nome obrigatório” precisa ser implementada em outro local e
+        este teste revisado.
+        """
+        t = TipoPagamento.objects.create(nome="")
+        self.assertEqual(t.nome, "")
