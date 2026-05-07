@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 
 from django.test import TestCase
 from django.utils import timezone as dj_timezone
+
 
 from .models import (
     Cliente,
@@ -21,26 +22,9 @@ from .models import (
 
 
 class FreezeTime:
-    """Utilitário simples de freeze de tempo para testes.
+    pass
 
-    Objetivo: permitir criar registros com data/hora fixa e, quando necessário,
-    calcular “ontem/hoje” com base no `now` congelado.
-    """
 
-    def __init__(self, frozen_dt: datetime):
-        if frozen_dt.tzinfo is None:
-            frozen_dt = frozen_dt.replace(tzinfo=timezone.utc)
-        self.frozen_dt = frozen_dt
-        self._old_now = None
-
-    def __enter__(self):
-        self._old_now = dj_timezone.now
-        dj_timezone.now = lambda: self.frozen_dt  # type: ignore[assignment]
-        return self
-
-    def __exit__(self, exc_type, exc, tb):
-        dj_timezone.now = self._old_now  # type: ignore[assignment]
-        return False
 
 
 class TestesDeUnidadeModels(TestCase):
@@ -105,6 +89,8 @@ class TestesDeUnidadeModels(TestCase):
         """
         p = Produto.objects.create(nome="", descricao="", valor=0)
         self.assertEqual(p.nome, "")
+
+
 
 
     def test_filtro_clientes_por_nome(self):
