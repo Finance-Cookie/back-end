@@ -124,6 +124,36 @@ class TestesDeUnidadeModels(TestCase):
         self.assertIn(self.cliente, resultados)
         self.assertIn(c2, resultados)
 
+    def test_alteracao_dados_cliente(self):
+        """Teste de Alteração: Alterar dados do cliente."""
+
+        cliente = Cliente.objects.create(
+            nome="Cliente Antigo",
+            email="antigo@email.com",
+            telefone="11999999999",
+            logradouro="Rua Antiga",
+            bairro="Centro",
+            numero="100",
+        )
+
+        cliente.nome = "Cliente Novo"
+        cliente.email = "novo@email.com"
+        cliente.telefone = "11888888888"
+        cliente.logradouro = "Rua Nova"
+        cliente.bairro = "Bairro Novo"
+        cliente.numero = "200"
+
+        cliente.save()
+
+        cliente.refresh_from_db()
+
+        self.assertEqual(cliente.nome, "Cliente Novo")
+        self.assertEqual(cliente.email, "novo@email.com")
+        self.assertEqual(cliente.telefone, "11888888888")
+        self.assertEqual(cliente.logradouro, "Rua Nova")
+        self.assertEqual(cliente.bairro, "Bairro Novo")
+        self.assertEqual(cliente.numero, "200")
+
     def test_filtro_entradas_por_data_bucket(self):
         """Teste de Listagem e Filtros: Testar filtro de Entradas por data (intervalo)."""
         # Usar valores com granularidade de segundos para reduzir chance de
