@@ -294,6 +294,28 @@ class TestesDeUnidadeModels(TestCase):
         )
         venda.delete()
         self.assertFalse(Venda.objects.filter(pk=venda.pk).exists())
+        
+    def test_exclusao_venda_realizada_ontem(self):
+        """Teste de Exclusão: Venda realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
+
+        venda = Venda.objects.create(
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        venda.data = yesterday
+        venda.save(update_fields=["data"])
+
+        venda.delete()
+
+        self.assertFalse(
+            Venda.objects.filter(pk=venda.pk).exists()
+        )
 
     def test_filtro_venda_por_cliente(self):
         """Teste de Listagem e Filtros: Filtrar vendas por cliente."""
