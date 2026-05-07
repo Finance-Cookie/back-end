@@ -355,7 +355,39 @@ class TestesDeUnidadeModels(TestCase):
         resultados = Venda.objects.filter(
             formapagamento=self.forma_pag
         )
-        
+
+        self.assertIn(venda1, resultados)
+        self.assertNotIn(venda2, resultados)
+
+    def test_filtro_venda_por_tipo(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por tipo"""
+
+        tipo_teste = TipoPagamento.objects.create(nome="Teste")
+
+        venda1 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        venda2 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=200,
+            formapagamento=self.forma_pag,
+            tipocategoria=tipo_teste,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        resultados = Venda.objects.filter(
+            tipocategoria=self.tipo_venda
+        )
+
         self.assertIn(venda1, resultados)
         self.assertNotIn(venda2, resultados)
 
