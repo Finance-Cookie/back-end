@@ -294,6 +294,40 @@ class TestesDeUnidadeModels(TestCase):
         self.assertIn(venda1, resultados)
         self.assertNotIn(venda2, resultados)
 
+    def test_filtro_venda_por_data(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por intervalo de data."""
+        now = dj_timezone.now().replace(microsecond=0)
+
+        venda1 = Venda.objects.create(
+            data=now - timedelta(days=2),
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+        venda2 = Venda.objects.create(
+            data=now,
+            valorTotal=200,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        start = now - timedelta(days=1)
+        end = now + timedelta(seconds=1)
+
+        resultados = Venda.objects.filter(
+            data__gte=start,
+            data__lt=end,
+        )
+
+        self.assertIn(venda2, resultados)
+        self.assertNotIn(venda1, resultados)
+
     def test_validacao_obrigatoriedade_dados_tipo(self):
         """Validação de Campo: Validar obrigatoriedade dos Dados de TipoPagamento.
 
