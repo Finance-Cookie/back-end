@@ -265,6 +265,35 @@ class TestesDeUnidadeModels(TestCase):
         venda.delete()
         self.assertFalse(Venda.objects.filter(pk=venda.pk).exists())
 
+    def test_filtro_venda_por_cliente(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por cliente."""
+        venda1 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+        cliente2 = Cliente.objects.create(
+            nome="Cliente B",
+            email="cliente2@gmail.com",
+        )
+        venda2 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=cliente2,
+        )
+
+        resultados = Venda.objects.filter(cliente=self.cliente)
+        self.assertIn(venda1, resultados)
+        self.assertNotIn(venda2, resultados)
+
     def test_validacao_obrigatoriedade_dados_tipo(self):
         """Validação de Campo: Validar obrigatoriedade dos Dados de TipoPagamento.
 
