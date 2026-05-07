@@ -328,6 +328,37 @@ class TestesDeUnidadeModels(TestCase):
         self.assertIn(venda2, resultados)
         self.assertNotIn(venda1, resultados)
 
+    def test_filtro_venda_por_forma_pagamento(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por forma de pagamento."""
+
+        forma_cartao = FormaPagamento.objects.create(nome="Cartão")
+
+        venda1 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+        venda2 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=200,
+            formapagamento=forma_cartao,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        resultados = Venda.objects.filter(
+            formapagamento=self.forma_pag
+        )
+        
+        self.assertIn(venda1, resultados)
+        self.assertNotIn(venda2, resultados)
+
     def test_validacao_obrigatoriedade_dados_tipo(self):
         """Validação de Campo: Validar obrigatoriedade dos Dados de TipoPagamento.
 
