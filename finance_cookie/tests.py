@@ -473,3 +473,21 @@ class TestesDeUnidadeModels(TestCase):
         self.assertFalse(
             Compra.objects.filter(pk=compra.pk).exists()
         )
+        
+    def test_exclusao_entrada_realizada_ontem(self):
+        """Teste de Exclusão: Entrada realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
+
+        entrada = Entrada.objects.create(
+            data=yesterday,
+            descricao="Entrada 1",
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_entrada,
+        )
+
+        entrada.delete()
+
+        self.assertFalse(
+            Entrada.objects.filter(pk=entrada.pk).exists()
+        )
