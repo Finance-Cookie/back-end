@@ -453,3 +453,23 @@ class TestesDeUnidadeModels(TestCase):
         """
         t = TipoPagamento.objects.create(nome="")
         self.assertEqual(t.nome, "")
+
+    def test_exclusao_compra_realizada_ontem(self):
+        """Teste de Exclusão: Compra realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
+
+        compra = Compra.objects.create(
+            data=yesterday,
+            descricao="Compra 1",
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_entrada,
+            desconto=2,
+            frete=3,
+        )
+
+        compra.delete()
+
+        self.assertFalse(
+            Compra.objects.filter(pk=compra.pk).exists()
+        )
