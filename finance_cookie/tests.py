@@ -453,3 +453,71 @@ class TestesDeUnidadeModels(TestCase):
         """
         t = TipoPagamento.objects.create(nome="")
         self.assertEqual(t.nome, "")
+
+    def test_exclusao_compra_realizada_ontem(self):
+        """Teste de Exclusão: Compra realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
+
+        compra = Compra.objects.create(
+            data=yesterday,
+            descricao="Compra 1",
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_entrada,
+            desconto=2,
+            frete=3,
+        )
+
+        compra.delete()
+
+        self.assertFalse(
+            Compra.objects.filter(pk=compra.pk).exists()
+        )
+
+    def test_exclusao_entrada_realizada_ontem(self):
+        """Teste de Exclusão: Entrada realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
+
+        entrada = Entrada.objects.create(
+            data=yesterday,
+            descricao="Entrada 1",
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_entrada,
+        )
+
+        entrada.delete()
+
+        self.assertFalse(
+            Entrada.objects.filter(pk=entrada.pk).exists()
+        )
+    
+    def test_filtro_compra_por_forma_pagamento(self):
+        """Teste de Listagem e Filtros: Filtrar compras por forma de pagamento."""
+
+        forma_teste = TipoPagamento.objects.create(nome="Pix")
+
+        compra1 = Compra.objects.create(
+            data=self._now(),
+            descricao="Compra 1",
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            desconto=2,
+            frete=3,
+        )
+
+        compra2 = Compra.objects.create(
+            data=self._now(),
+            descricao="Compra 2",
+            valorTotal=200,
+            formapagamento=forma_teste,
+            desconto=2,
+            frete=3,
+        )
+
+        resultados = Compra.objects.filter(
+            formapagamento=self.forma_pag
+        )
+
+        self.assertIn(compra1, resultados)
+        self.assertNotIn(compra2, resultados)
