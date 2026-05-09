@@ -262,6 +262,33 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA08.06** | O administrador edita os dados de um cliente existente (Nome, Telefone ou Endereço) e clica em Salvar. O sistema exibe a mensagem: Dados do cliente atualizados com sucesso! |
 | **TA08.07** | O administrador solicita a exclusão de um cliente e, após confirmação, o sistema exibe a mensagem: Cliente excluído com sucesso! |
 
+### User Story US09 - Manter Histórico
+
+
+| **Descrição** | O sistema deve permitir a visualização de históricos que apresentam dados consolidados das ações realizadas no sistema. O administrador poderá visualizar históricos gerais e acessar históricos específicos com informações detalhadas, auxiliando na análise e tomada de decisão. |
+
+| **Requisitos envolvidos** |                                                    |
+| ------------- | :------------------------------------------------------------- |
+| RF09          | Manter Histórico |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 4 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 5 PF                                | 
+| **Analista**              | Pedro                               | 
+| **Desenvolvedor**         | Felipe                              | 
+| **Revisor**               | Elder                               | 
+| **Testador**              | Pedro                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA05.01** | O administrador acessa a área de históricos e visualiza os históricos com ações realizadas no dia com filtro por data. |
+| **TA05.02** | O administrador seleciona uma data específica e o sistema exibe todos os históricos daquela data. |
+| **TA05.02** | O administrador seleciona um histórico específico e o sistema exibe suas informações detalhadas corretamente. |
+
 
 ### User Story US10 - Manter Relatório
 
