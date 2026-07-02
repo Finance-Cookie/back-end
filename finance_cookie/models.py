@@ -75,7 +75,27 @@ class Item(models.Model):
         return self.nome
     
 class FormaPagamento(models.Model):
-    nome = models.CharField(max_length=50)
+    nome = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        ordering = ['nome']
+        verbose_name = 'Forma de Pagamento'
+        verbose_name_plural = 'Formas de Pagamento'
+
+    def clean(self):
+        if not self.nome or not self.nome.strip():
+            raise ValidationError({'nome': 'O nome da forma de pagamento é obrigatório.'})
+
+        normalized_name = self.nome.strip()
+        duplicate_qs = FormaPagamento.objects.exclude(pk=self.pk).filter(nome__iexact=normalized_name)
+        if duplicate_qs.exists():
+            raise ValidationError({'nome': 'Já existe uma forma de pagamento com este nome.'})
+
+        self.nome = normalized_name
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nome
@@ -109,11 +129,62 @@ class Compra(models.Model):
     desconto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     frete = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    class Meta:
+        ordering = ['-data']
+
+    def clean(self):
+        if not self.descricao or not self.descricao.strip():
+            raise ValidationError({'descricao': 'A descrição da compra é obrigatória.'})
+
+        if self.frete is None or self.frete < 0:
+            raise ValidationError({'frete': 'O frete não pode ser negativo.'})
+
+        if self.desconto is None or self.desconto < 0:
+            raise ValidationError({'desconto': 'O desconto não pode ser negativo.'})
+
+        self.descricao = self.descricao.strip()
+
+    def calcular_valor_total(self):
+        subtotal = sum(
+            item.quantidade * item.valor_unitario
+            for item in self.itemcompra_set.all()
+        )
+        return subtotal + self.frete - self.desconto
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        self.valorTotal = self.calcular_valor_total()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Compra em {self.data.strftime('%Y-%m-%d %H:%M:%S')} - Valor Total: {self.valorTotal}"
+
 class ItemCompra(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     compra = models.ForeignKey(Compra, on_delete=models.CASCADE)
     quantidade = models.PositiveIntegerField()
     valor_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        verbose_name = 'Item da Compra'
+        verbose_name_plural = 'Itens de Compra'
+
+    def clean(self):
+        if self.quantidade <= 0:
+            raise ValidationError({'quantidade': 'A quantidade deve ser maior que zero.'})
+
+        if self.valor_unitario is None or self.valor_unitario <= 0:
+            raise ValidationError({'valor_unitario': 'O valor unitário deve ser maior que zero.'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+        self.compra.save()
+
+    def delete(self, *args, **kwargs):
+        compra = self.compra
+        super().delete(*args, **kwargs)
+        compra.save()
 
     def __str__(self):
         return f"{self.quantidade} x {self.item.nome} - Valor Unitário: {self.valor_unitario}"
