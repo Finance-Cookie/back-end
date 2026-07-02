@@ -170,6 +170,36 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA05.05** | O administrador solicita a exclusão de uma venda realizada no mesmo dia (até as 23h59) e o sistema exibe a mensagem: Venda excluída com sucesso! |
 | **TA05.06** | O administrador tenta excluir uma venda realizada em data anterior à atual e o sistema exibe a mensagem: Não é possível excluir esta venda após o prazo permitido. |
 
+### User Story US06 - Manter Compra
+
+
+| **Descrição** | O sistema deve permitir o gerenciamento de compras, possibilitando ao administrador realizar a inclusão de compras, além de alterar, listar, visualizar e excluir registros. O sistema deve calcular automaticamente o valor total com base nos itens, quantidade, valor unitário, frete e descontos |
+
+| **Requisitos envolvidos** |                                                     |
+| ------------- | :------------------------------------------------------------- |
+| RF04          | Manter Compra |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 8 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 8 PF                                | 
+| **Analista**              | Felipe                              | 
+| **Desenvolvedor**         | Pedro                               | 
+| **Revisor**               | Elder                               | 
+| **Testador**              | Felipe                              | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA05.01** | O administrador informa os dados da compra (Data, Itens, Forma de Pagamento, Quantidade, Valor unitário, Desconto, Frete e Tipo) e clica em Salvar. O sistema calcula o Valor Total e exibe: Compra realizada com sucesso! |
+| **TA05.02** | O administrador altera itens, quantidade, valor unitário, desconto ou frete de uma compra e o sistema recalcula o Valor Total automaticamente antes de salvar as alterações. |
+| **TA05.03** | O administrador acessa a listagem de compras e aplica filtros por Data, Forma de Pagamento ou Tipo, visualizando apenas os resultados correspondentes. |
+| **TA05.04** | O administrador seleciona uma compra para visualizar e o sistema exibe detalhadamente todos os dados, incluindo a lista de itens comprados. |
+| **TA05.05** | O administrador solicita a exclusão de uma compra realizada no mesmo dia (até as 23h59) e o sistema exibe a mensagem: Compra excluída com sucesso! |
+| **TA05.06** | O administrador tenta excluir uma compra realizada em data anterior à atual e o sistema exibe a mensagem: Não é possível excluir esta compra após o prazo permitido. |
+
 
 ### User Story US06 - Manter Item
 
@@ -262,6 +292,33 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA08.05** | O administrador seleciona um cliente para visualizar e o sistema exibe detalhadamente o Nome, Telefone e o Endereço (Logradouro, Bairro e Número). |
 | **TA08.06** | O administrador edita os dados de um cliente existente (Nome, Telefone ou Endereço) e clica em Salvar. O sistema exibe a mensagem: Dados do cliente atualizados com sucesso! |
 | **TA08.07** | O administrador solicita a exclusão de um cliente e, após confirmação, o sistema exibe a mensagem: Cliente excluído com sucesso! |
+
+### User Story US09 - Manter Histórico
+
+
+| **Descrição** | O sistema deve permitir a visualização de históricos que apresentam dados consolidados das ações realizadas no sistema. O administrador poderá visualizar históricos gerais e acessar históricos específicos com informações detalhadas, auxiliando na análise e tomada de decisão. |
+
+| **Requisitos envolvidos** |                                                    |
+| ------------- | :------------------------------------------------------------- |
+| RF09          | Manter Histórico |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 4 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 5 PF                                | 
+| **Analista**              | Pedro                               | 
+| **Desenvolvedor**         | Felipe                              | 
+| **Revisor**               | Elder                               | 
+| **Testador**              | Pedro                               | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA05.01** | O administrador acessa a área de históricos e visualiza os históricos com ações realizadas no dia com filtro por data. |
+| **TA05.02** | O administrador seleciona uma data específica e o sistema exibe todos os históricos daquela data. |
+| **TA05.02** | O administrador seleciona um histórico específico e o sistema exibe suas informações detalhadas corretamente. |
 
 
 ### User Story US10 - Manter Relatório

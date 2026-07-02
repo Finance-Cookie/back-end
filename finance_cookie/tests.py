@@ -92,8 +92,23 @@ class TestesDeUnidadeModels(TestCase):
         p = Produto.objects.create(nome="", descricao="", valor=0)
         self.assertEqual(p.nome, "")
 
+    def test_validacao_obrigatoriedade_dados_cliente(self):
+        """Validação de Campo: Validar obrigatoriedade dos Dados de Cliente.
 
-
+        Similar ao teste de produto, o model `Cliente` não define validação de
+        `nome`, então o banco aceita string vazia. Validamos o comportamento
+        atual do model, mas a regra de “nome obrigatório” precisa ser
+        implementada em outro local e este teste revisado.
+        """
+        c = Cliente.objects.create(
+            nome="",
+            email="",
+            telefone="",
+            logradouro="",
+            bairro="",
+            numero="",
+        )
+        self.assertEqual(c.nome, "")
 
     def test_validacao_tipo_nome_obrigatorio(self):
         with self.assertRaises(ValidationError) as exc:
@@ -148,6 +163,36 @@ class TestesDeUnidadeModels(TestCase):
         resultados = Cliente.objects.filter(nome__icontains=termo)
         self.assertIn(self.cliente, resultados)
         self.assertIn(c2, resultados)
+
+    def test_alteracao_dados_cliente(self):
+        """Teste de Alteração: Alterar dados do cliente."""
+
+        cliente = Cliente.objects.create(
+            nome="Cliente Antigo",
+            email="antigo@email.com",
+            telefone="11999999999",
+            logradouro="Rua Antiga",
+            bairro="Centro",
+            numero="100",
+        )
+
+        cliente.nome = "Cliente Novo"
+        cliente.email = "novo@email.com"
+        cliente.telefone = "11888888888"
+        cliente.logradouro = "Rua Nova"
+        cliente.bairro = "Bairro Novo"
+        cliente.numero = "200"
+
+        cliente.save()
+
+        cliente.refresh_from_db()
+
+        self.assertEqual(cliente.nome, "Cliente Novo")
+        self.assertEqual(cliente.email, "novo@email.com")
+        self.assertEqual(cliente.telefone, "11888888888")
+        self.assertEqual(cliente.logradouro, "Rua Nova")
+        self.assertEqual(cliente.bairro, "Bairro Novo")
+        self.assertEqual(cliente.numero, "200")
 
     def test_filtro_entradas_por_data_bucket(self):
         """Teste de Listagem e Filtros: Testar filtro de Entradas por data (intervalo)."""
@@ -287,4 +332,230 @@ class TestesDeUnidadeModels(TestCase):
         )
         venda.delete()
         self.assertFalse(Venda.objects.filter(pk=venda.pk).exists())
+        
+    def test_exclusao_venda_realizada_ontem(self):
+        """Teste de Exclusão: Venda realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
 
+        venda = Venda.objects.create(
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        venda.data = yesterday
+        venda.save(update_fields=["data"])
+
+        venda.delete()
+
+        self.assertFalse(
+            Venda.objects.filter(pk=venda.pk).exists()
+        )
+
+    def test_filtro_venda_por_cliente(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por cliente."""
+        venda1 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+        cliente2 = Cliente.objects.create(
+            nome="Cliente B",
+            email="cliente2@gmail.com",
+        )
+        venda2 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=cliente2,
+        )
+
+        resultados = Venda.objects.filter(cliente=self.cliente)
+        self.assertIn(venda1, resultados)
+        self.assertNotIn(venda2, resultados)
+
+    def test_filtro_venda_por_data(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por intervalo de data."""
+        now = dj_timezone.now().replace(microsecond=0)
+
+        venda1 = Venda.objects.create(
+            data=now - timedelta(days=2),
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+        venda2 = Venda.objects.create(
+            data=now,
+            valorTotal=200,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        start = now - timedelta(days=1)
+        end = now + timedelta(seconds=1)
+
+        resultados = Venda.objects.filter(
+            data__gte=start,
+            data__lt=end,
+        )
+
+        self.assertIn(venda2, resultados)
+        self.assertNotIn(venda1, resultados)
+
+    def test_filtro_venda_por_forma_pagamento(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por forma de pagamento."""
+
+        forma_cartao = FormaPagamento.objects.create(nome="Cartão")
+
+        venda1 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+        venda2 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=200,
+            formapagamento=forma_cartao,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        resultados = Venda.objects.filter(
+            formapagamento=self.forma_pag
+        )
+
+        self.assertIn(venda1, resultados)
+        self.assertNotIn(venda2, resultados)
+
+    def test_filtro_venda_por_tipo(self):
+        """Teste de Listagem e Filtros: Filtrar vendas por tipo"""
+
+        tipo_teste = TipoPagamento.objects.create(nome="Teste")
+
+        venda1 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_venda,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        venda2 = Venda.objects.create(
+            data=self._now(),
+            valorTotal=200,
+            formapagamento=self.forma_pag,
+            tipocategoria=tipo_teste,
+            desconto=0,
+            frete=0,
+            cliente=self.cliente,
+        )
+
+        resultados = Venda.objects.filter(
+            tipocategoria=self.tipo_venda
+        )
+
+        self.assertIn(venda1, resultados)
+        self.assertNotIn(venda2, resultados)
+
+    def test_validacao_obrigatoriedade_dados_tipo(self):
+        """Validação de Campo: Validar obrigatoriedade dos Dados de TipoPagamento.
+
+        O model `TipoPagamento` não define validação de `nome`, então o banco
+        aceita string vazia. Validamos o comportamento atual do model, mas a
+        regra de “nome obrigatório” precisa ser implementada em outro local e
+        este teste revisado.
+        """
+        t = TipoPagamento.objects.create(nome="")
+        self.assertEqual(t.nome, "")
+
+    def test_exclusao_compra_realizada_ontem(self):
+        """Teste de Exclusão: Compra realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
+
+        compra = Compra.objects.create(
+            data=yesterday,
+            descricao="Compra 1",
+            valorTotal=0,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_entrada,
+            desconto=2,
+            frete=3,
+        )
+
+        compra.delete()
+
+        self.assertFalse(
+            Compra.objects.filter(pk=compra.pk).exists()
+        )
+
+    def test_exclusao_entrada_realizada_ontem(self):
+        """Teste de Exclusão: Entrada realizada ontem."""
+        yesterday = dj_timezone.now() - timedelta(days=1)
+
+        entrada = Entrada.objects.create(
+            data=yesterday,
+            descricao="Entrada 1",
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_entrada,
+        )
+
+        entrada.delete()
+
+        self.assertFalse(
+            Entrada.objects.filter(pk=entrada.pk).exists()
+        )
+    
+    def test_filtro_compra_por_forma_pagamento(self):
+        """Teste de Listagem e Filtros: Filtrar compras por forma de pagamento."""
+
+        forma_teste = TipoPagamento.objects.create(nome="Pix")
+
+        compra1 = Compra.objects.create(
+            data=self._now(),
+            descricao="Compra 1",
+            valorTotal=100,
+            formapagamento=self.forma_pag,
+            desconto=2,
+            frete=3,
+        )
+
+        compra2 = Compra.objects.create(
+            data=self._now(),
+            descricao="Compra 2",
+            valorTotal=200,
+            formapagamento=forma_teste,
+            desconto=2,
+            frete=3,
+        )
+
+        resultados = Compra.objects.filter(
+            formapagamento=self.forma_pag
+        )
+
+        self.assertIn(compra1, resultados)
+        self.assertNotIn(compra2, resultados)
