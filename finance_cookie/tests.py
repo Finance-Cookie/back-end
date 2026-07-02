@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone as dj_timezone
 
@@ -92,6 +93,31 @@ class TestesDeUnidadeModels(TestCase):
 
 
 
+
+    def test_validacao_tipo_nome_obrigatorio(self):
+        with self.assertRaises(ValidationError) as exc:
+            TipoPagamento.objects.create(nome="  ")
+
+        self.assertIn('nome', exc.exception.message_dict)
+
+    def test_validacao_tipo_nome_unico(self):
+        TipoPagamento.objects.create(nome="Compra")
+        with self.assertRaises(ValidationError) as exc:
+            TipoPagamento.objects.create(nome="compra")
+
+        self.assertIn('nome', exc.exception.message_dict)
+
+    def test_validacao_item_nome_obrigatorio(self):
+        with self.assertRaises(ValidationError) as exc:
+            Item.objects.create(nome="  ", valor=5.00)
+
+        self.assertIn('nome', exc.exception.message_dict)
+
+    def test_validacao_item_valor_maior_que_zero(self):
+        with self.assertRaises(ValidationError) as exc:
+            Item.objects.create(nome="Item Inválido", valor=0)
+
+        self.assertIn('valor', exc.exception.message_dict)
 
     def test_filtro_clientes_por_nome(self):
         """Teste de Listagem e Filtros: Testar filtro de Clientes (por termo)."""
