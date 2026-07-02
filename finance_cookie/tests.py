@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from datetime import timedelta
+import datetime
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone as dj_timezone
 
@@ -107,6 +109,44 @@ class TestesDeUnidadeModels(TestCase):
             numero="",
         )
         self.assertEqual(c.nome, "")
+
+    def test_validacao_tipo_nome_obrigatorio(self):
+        with self.assertRaises(ValidationError) as exc:
+            TipoPagamento.objects.create(nome="  ")
+
+        self.assertIn('nome', exc.exception.message_dict)
+
+    def test_validacao_tipo_nome_unico(self):
+        TipoPagamento.objects.create(nome="Compra")
+        with self.assertRaises(ValidationError) as exc:
+            TipoPagamento.objects.create(nome="compra")
+
+        self.assertIn('nome', exc.exception.message_dict)
+
+    def test_validacao_item_nome_obrigatorio(self):
+        with self.assertRaises(ValidationError) as exc:
+            Item.objects.create(nome="  ", valor=5.00)
+
+        self.assertIn('nome', exc.exception.message_dict)
+
+    def test_validacao_item_valor_maior_que_zero(self):
+        with self.assertRaises(ValidationError) as exc:
+            Item.objects.create(nome="Item Inválido", valor=0)
+
+        self.assertIn('valor', exc.exception.message_dict)
+
+    def test_validacao_formapagamento_nome_obrigatorio(self):
+        with self.assertRaises(ValidationError) as exc:
+            FormaPagamento.objects.create(nome="  ")
+
+        self.assertIn('nome', exc.exception.message_dict)
+
+    def test_validacao_formapagamento_nome_unico(self):
+        FormaPagamento.objects.create(nome="PIX")
+        with self.assertRaises(ValidationError) as exc:
+            FormaPagamento.objects.create(nome="pix")
+
+        self.assertIn('nome', exc.exception.message_dict)
 
     def test_filtro_clientes_por_nome(self):
         """Teste de Listagem e Filtros: Testar filtro de Clientes (por termo)."""
@@ -239,8 +279,8 @@ class TestesDeUnidadeModels(TestCase):
     def test_recalculo_automatico_da_compra(self):
         """Teste de Cálculo: Validar recálculo automático da Compra.
 
-        Não há recálculo automático implementado; validamos a regra de forma
-        semelhante ao teste de venda.
+        O model deve recalcular o valor total automaticamente sempre que itens
+        da compra forem alterados.
         """
         compra = Compra.objects.create(
             data=self._now(),
@@ -257,8 +297,6 @@ class TestesDeUnidadeModels(TestCase):
 
         subtotal = sum(ic.quantidade * ic.valor_unitario for ic in ItemCompra.objects.filter(compra=compra))
         total = subtotal + compra.frete - compra.desconto
-        compra.valorTotal = total
-        compra.save()
         compra.refresh_from_db()
         self.assertEqual(compra.valorTotal, total)
 
