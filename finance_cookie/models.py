@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 
 class Cliente(models.Model):
@@ -20,14 +22,54 @@ class Produto(models.Model):
         return self.nome
     
 class TipoPagamento(models.Model):
-    nome = models.CharField(max_length=50)
+    nome = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        ordering = ['nome']
+        verbose_name = 'Tipo'
+        verbose_name_plural = 'Tipos'
+
+    def clean(self):
+        if not self.nome or not self.nome.strip():
+            raise ValidationError({'nome': 'O nome do tipo é obrigatório.'})
+
+        normalized_name = self.nome.strip()
+        duplicate_qs = TipoPagamento.objects.exclude(pk=self.pk).filter(nome__iexact=normalized_name)
+        if duplicate_qs.exists():
+            raise ValidationError({'nome': 'Já existe um tipo com este nome.'})
+
+        self.nome = normalized_name
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nome
     
 class Item(models.Model):
     nome = models.CharField(max_length=100)
-    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    valor = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.01)],
+    )
+
+    class Meta:
+        ordering = ['nome']
+
+    def clean(self):
+        if not self.nome or not self.nome.strip():
+            raise ValidationError({'nome': 'O nome do item é obrigatório.'})
+
+        if self.valor is None or self.valor <= 0:
+            raise ValidationError({'valor': 'O valor do item deve ser maior que zero.'})
+
+        self.nome = self.nome.strip()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nome
