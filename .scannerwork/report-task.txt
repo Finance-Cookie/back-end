@@ -1,0 +1,6 @@
+projectKey=finance-cookie
+serverUrl=https://labens.dct.ufrn.br/sonarqube
+serverVersion=25.12.0.117093
+dashboardUrl=https://labens.dct.ufrn.br/sonarqube/dashboard?id=finance-cookie
+ceTaskId=1202b370-c9e8-4d9e-92b3-296602e0f066
+ceTaskUrl=https://labens.dct.ufrn.br/sonarqube/api/ce/task?id=1202b370-c9e8-4d9e-92b3-296602e0f066

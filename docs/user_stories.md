@@ -59,10 +59,10 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **Estimativa**          | 6 h       |
 | **Tempo Gasto (real):** |           |
 | **Tamanho Funcional**   | 5 PF      |
-| **Analista**            | Elder     |
-| **Desenvolvedor**       | Pedro     |
-| **Revisor**             | Felipe    |
-| **Testador**            | Elder     |
+| **Analista**            | Felipe     |
+| **Desenvolvedor**       | Elder     |
+| **Revisor**             | Pedro    |
+| **Testador**            | Felipe     |
 
 ---
 
@@ -154,10 +154,10 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **Estimativa**            | 8 h                                 | 
 | **Tempo Gasto (real):**   |                                     | 
 | **Tamanho Funcional**     | 8 PF                                | 
-| **Analista**              | Elder                               | 
-| **Desenvolvedor**         | Pedro                               | 
+| **Analista**              | Pedro                               | 
+| **Desenvolvedor**         | Elder                               | 
 | **Revisor**               | Felipe                              | 
-| **Testador**              | Elder                               | 
+| **Testador**              | Pedro                               | 
 
 
 | Testes de Aceitação (TA) |  |
@@ -277,8 +277,8 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **Tempo Gasto (real):**   |                                     | 
 | **Tamanho Funcional**     | 6 PF                                | 
 | **Analista**              | Pedro                               | 
-| **Desenvolvedor**         | Elder                               | 
-| **Revisor**               | Felipe                              | 
+| **Desenvolvedor**         | Felipe                               | 
+| **Revisor**               | Elder                              | 
 | **Testador**              | Pedro                               | 
 
 
