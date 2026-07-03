@@ -1,5 +1,18 @@
 from rest_framework import serializers
-from .models import Produto, Cliente, Saida
+from .models import (
+    Produto,
+    Cliente,
+    Item,
+    TipoPagamento,
+    FormaPagamento,
+    Entrada,
+    Saida,
+    Compra,
+    ItemCompra,
+    Venda,
+    ProdutoVenda,
+)
+
 
 class ProdutoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,7 +23,8 @@ class ProdutoSerializer(serializers.ModelSerializer):
         if value <= 0:
             raise serializers.ValidationError("O valor do produto deve ser maior que zero.")
         return value
-      
+
+
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
@@ -43,9 +57,66 @@ class ClienteSerializer(serializers.ModelSerializer):
             attrs['email'] = email.strip().lower()
 
         return attrs
-    
-class SaidaSerializer(serializers.ModelSerializer):
 
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = '__all__'
+
+    def validate_valor(self, value):
+        if value is None or value <= 0:
+            raise serializers.ValidationError('O valor do item deve ser maior que zero.')
+        return value
+
+
+class TipoPagamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoPagamento
+        fields = '__all__'
+
+
+class FormaPagamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormaPagamento
+        fields = '__all__'
+
+
+class EntradaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Entrada
+        fields = '__all__'
+
+
+class SaidaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Saida
-        fields = "__all__"
+        fields = '__all__'
+
+
+class ItemCompraSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemCompra
+        fields = '__all__'
+
+
+class CompraSerializer(serializers.ModelSerializer):
+    itens = ItemCompraSerializer(many=True, source='itemcompra_set', required=False, read_only=True)
+
+    class Meta:
+        model = Compra
+        fields = '__all__'
+
+
+class ProdutoVendaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProdutoVenda
+        fields = '__all__'
+
+
+class VendaSerializer(serializers.ModelSerializer):
+    itens = ProdutoVendaSerializer(many=True, source='produtovenda_set', required=False, read_only=True)
+
+    class Meta:
+        model = Venda
+        fields = '__all__'

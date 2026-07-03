@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone as dj_timezone
 
 class Cliente(models.Model):
     nome = models.CharField(max_length=100)
@@ -101,7 +102,7 @@ class FormaPagamento(models.Model):
         return self.nome
 
 class Saida(models.Model):
-    data = models.DateTimeField(auto_now_add=True)
+    data = models.DateTimeField(default=dj_timezone.now)
     descricao = models.TextField()
     valorTotal = models.DecimalField(max_digits=10, decimal_places=2)
     formapagamento = models.ForeignKey(FormaPagamento, on_delete=models.CASCADE)
@@ -111,7 +112,7 @@ class Saida(models.Model):
         return f"Saída em {self.data.strftime('%Y-%m-%d %H:%M:%S')} - Valor Total: {self.valorTotal}"
     
 class Entrada(models.Model):
-    data = models.DateTimeField(auto_now_add=True)
+    data = models.DateTimeField(default=dj_timezone.now)
     descricao = models.TextField()
     valorTotal = models.DecimalField(max_digits=10, decimal_places=2)
     formapagamento = models.ForeignKey(FormaPagamento, on_delete=models.CASCADE)
@@ -121,7 +122,7 @@ class Entrada(models.Model):
         return f"Entrada em {self.data.strftime('%Y-%m-%d %H:%M:%S')} - Valor Total: {self.valorTotal}"
 
 class Compra(models.Model):
-    data = models.DateTimeField(auto_now_add=True)
+    data = models.DateTimeField(default=dj_timezone.now)
     descricao = models.TextField()
     valorTotal = models.DecimalField(max_digits=10, decimal_places=2)
     formapagamento = models.ForeignKey(FormaPagamento, on_delete=models.CASCADE)
@@ -153,8 +154,16 @@ class Compra(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        self.valorTotal = self.calcular_valor_total()
-        super().save(*args, **kwargs)
+        # Ensure instance has a PK before accessing related itemcompra_set
+        if not self.pk:
+            # Create the object first with current fields so it has a PK
+            super().save(*args, **kwargs)
+            # Recalculate total and update
+            self.valorTotal = self.calcular_valor_total()
+            super().save(update_fields=["valorTotal"])
+        else:
+            self.valorTotal = self.calcular_valor_total()
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Compra em {self.data.strftime('%Y-%m-%d %H:%M:%S')} - Valor Total: {self.valorTotal}"
@@ -190,7 +199,7 @@ class ItemCompra(models.Model):
         return f"{self.quantidade} x {self.item.nome} - Valor Unitário: {self.valor_unitario}"
 
 class Venda(models.Model):
-    data = models.DateTimeField(auto_now_add=True)
+    data = models.DateTimeField(default=dj_timezone.now)
     valorTotal = models.DecimalField(max_digits=10, decimal_places=2)
     formapagamento = models.ForeignKey(FormaPagamento, on_delete=models.CASCADE)
     tipocategoria = models.ForeignKey(TipoPagamento, on_delete=models.CASCADE)

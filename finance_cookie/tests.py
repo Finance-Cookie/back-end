@@ -142,9 +142,10 @@ class TestesDeUnidadeModels(TestCase):
         self.assertIn('nome', exc.exception.message_dict)
 
     def test_validacao_formapagamento_nome_unico(self):
-        FormaPagamento.objects.create(nome="PIX")
+        # criar um nome novo e validar que a versão em lower-case é considerada duplicada
+        FormaPagamento.objects.create(nome="Transferencia")
         with self.assertRaises(ValidationError) as exc:
-            FormaPagamento.objects.create(nome="pix")
+            FormaPagamento.objects.create(nome="transferencia")
 
         self.assertIn('nome', exc.exception.message_dict)
 
@@ -484,13 +485,10 @@ class TestesDeUnidadeModels(TestCase):
     def test_validacao_obrigatoriedade_dados_tipo(self):
         """Validação de Campo: Validar obrigatoriedade dos Dados de TipoPagamento.
 
-        O model `TipoPagamento` não define validação de `nome`, então o banco
-        aceita string vazia. Validamos o comportamento atual do model, mas a
-        regra de “nome obrigatório” precisa ser implementada em outro local e
-        este teste revisado.
+        Agora o model valida o nome e deve lançar `ValidationError` quando vazio.
         """
-        t = TipoPagamento.objects.create(nome="")
-        self.assertEqual(t.nome, "")
+        with self.assertRaises(ValidationError):
+            TipoPagamento.objects.create(nome="")
 
     def test_exclusao_compra_realizada_ontem(self):
         """Teste de Exclusão: Compra realizada ontem."""
@@ -533,13 +531,14 @@ class TestesDeUnidadeModels(TestCase):
     def test_filtro_compra_por_forma_pagamento(self):
         """Teste de Listagem e Filtros: Filtrar compras por forma de pagamento."""
 
-        forma_teste = TipoPagamento.objects.create(nome="Pix")
+        forma_teste = FormaPagamento.objects.create(nome="Pix2")
 
         compra1 = Compra.objects.create(
             data=self._now(),
             descricao="Compra 1",
             valorTotal=100,
             formapagamento=self.forma_pag,
+            tipocategoria=self.tipo_entrada,
             desconto=2,
             frete=3,
         )
@@ -549,6 +548,7 @@ class TestesDeUnidadeModels(TestCase):
             descricao="Compra 2",
             valorTotal=200,
             formapagamento=forma_teste,
+            tipocategoria=self.tipo_entrada,
             desconto=2,
             frete=3,
         )
