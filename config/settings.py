@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'finance_cookie',
     'django_filters',
-    'rest_framework',
 ]
 
 REST_FRAMEWORK = {
