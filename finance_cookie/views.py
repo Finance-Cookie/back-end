@@ -1,8 +1,17 @@
 from rest_framework import viewsets, filters, status
+from .models import Produto, Cliente
+from .serializers import ProdutoSerializer, ClienteSerializer
 from rest_framework.response import Response
 
-from .models import Cliente
-from .serializers import ClienteSerializer
+class ProdutoViewSet(viewsets.ModelViewSet):
+
+    queryset = Produto.objects.all()
+    serializer_class = ProdutoSerializer
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['nome', 'descricao']
+    ordering_fields = ['nome', 'valor']
+    ordering = ['nome']
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all().order_by('nome')
