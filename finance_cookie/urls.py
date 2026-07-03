@@ -3,8 +3,8 @@ from rest_framework import routers
 from . import api_views
 
 router = routers.DefaultRouter()
-router.register(r'clients', api_views.ClienteViewSet, basename='clients')
-router.register(r'products', api_views.ProdutoViewSet, basename='products')
+router.register(r'clientes', api_views.ClienteViewSet, basename='clientes')
+router.register(r'produtos', api_views.ProdutoViewSet, basename='produtos')
 router.register(r'items', api_views.ItemViewSet, basename='items')
 router.register(r'tipos', api_views.TipoPagamentoViewSet, basename='tipospagamento')
 router.register(r'formas', api_views.FormaPagamentoViewSet, basename='formaspagamento')
