@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Produto, Cliente
+from .models import Produto, Cliente, Saida
 
 class ProdutoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,3 +43,9 @@ class ClienteSerializer(serializers.ModelSerializer):
             attrs['email'] = email.strip().lower()
 
         return attrs
+    
+class SaidaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Saida
+        fields = "__all__"
