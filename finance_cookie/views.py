@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters, status
-from .models import Produto, Cliente
-from .serializers import ProdutoSerializer, ClienteSerializer
+from .models import Produto, Cliente, Saida
+from .serializers import ProdutoSerializer, ClienteSerializer, SaidaSerializer
 from rest_framework.response import Response
 
 class ProdutoViewSet(viewsets.ModelViewSet):
@@ -81,3 +81,14 @@ class ClienteViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK,
         )
+    
+class SaidaViewSet(viewsets.ModelViewSet):
+
+    queryset = Saida.objects.all()
+    serializer_class = SaidaSerializer
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+
+    search_fields = ['descricao', 'formapgamento_nome', 'tipocategoria_nome']
+    ordering_fields = ['data', 'valorTotal']
+    ordering = ['-data']
