@@ -25,5 +25,5 @@ router.register(r'products', api_views.ProdutoViewSet, basename='products')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('api/', include('finance_cookie.urls')),
 ]
