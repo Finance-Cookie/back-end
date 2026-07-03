@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from finance_cookie import api_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/clients/', api_views.clients_list_create),
+    path('api/products/', api_views.products_list_create),
 ]
