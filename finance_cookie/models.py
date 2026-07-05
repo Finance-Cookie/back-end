@@ -218,3 +218,16 @@ class ProdutoVenda(models.Model):
 
     def __str__(self):
         return f"{self.quantidade} x {self.produto.nome} - Valor Unitário: {self.valor_unitario}"
+
+
+class Usuario(models.Model):
+    nome = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    senha_hash = models.CharField(max_length=255)
+    criado_em = models.DateTimeField(default=dj_timezone.now)
+
+    saldo_fisico = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    saldo_online = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return self.nome
