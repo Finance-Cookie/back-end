@@ -1,94 +1,150 @@
-from rest_framework import viewsets, filters, status
-from .models import Produto, Cliente, Saida
-from .serializers import ProdutoSerializer, ClienteSerializer, SaidaSerializer
-from rest_framework.response import Response
+from rest_framework import viewsets, filters
+from rest_framework.permissions import AllowAny
 
-class ProdutoViewSet(viewsets.ModelViewSet):
+from .models import (
+    Cliente,
+    Produto,
+    Item,
+    TipoPagamento,
+    FormaPagamento,
+    Entrada,
+    Saida,
+    Compra,
+    ItemCompra,
+    Venda,
+    ProdutoVenda,
+)
+from .serializers import (
+    ClienteSerializer,
+    ProdutoSerializer,
+    ItemSerializer,
+    TipoPagamentoSerializer,
+    FormaPagamentoSerializer,
+    EntradaSerializer,
+    SaidaSerializer,
+    CompraSerializer,
+    ItemCompraSerializer,
+    VendaSerializer,
+    ProdutoVendaSerializer,
+)
 
-    queryset = Produto.objects.all()
-    serializer_class = ProdutoSerializer
-
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['nome', 'descricao']
-    ordering_fields = ['nome', 'valor']
-    ordering = ['nome']
 
 class ClienteViewSet(viewsets.ModelViewSet):
-    queryset = Cliente.objects.all().order_by('nome')
+    queryset = Cliente.objects.all().order_by('id')
     serializer_class = ClienteSerializer
-
-    filter_backends = [
-        filters.SearchFilter,
-        filters.OrderingFilter,
-    ]
-
-    search_fields = [
-        'nome',
-        'email',
-        'telefone',
-        'bairro',
-        'logradouro',
-    ]
-
-    ordering_fields = [
-        'id',
-        'nome',
-        'bairro',
-    ]
-
-    ordering = ['nome']
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        return Response(
-            {
-                'message': 'Cliente cadastrado com sucesso!',
-                'cliente': serializer.data,
-            },
-            status=status.HTTP_201_CREATED,
-        )
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-
-        serializer = self.get_serializer(
-            instance,
-            data=request.data,
-            partial=partial,
-        )
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        return Response(
-            {
-                'message': 'Dados do cliente atualizados com sucesso!',
-                'cliente': serializer.data,
-            },
-            status=status.HTTP_200_OK,
-        )
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-
-        return Response(
-            {
-                'message': 'Cliente excluído com sucesso!'
-            },
-            status=status.HTTP_200_OK,
-        )
-    
-class SaidaViewSet(viewsets.ModelViewSet):
-
-    queryset = Saida.objects.all()
-    serializer_class = SaidaSerializer
+    permission_classes = [AllowAny]
 
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['nome','email','telefone','bairro','logradouro']
+    ordering_fields = ['id','nome','bairro']
+    ordering = ['nome']
 
-    search_fields = ['descricao', 'formapgamento_nome', 'tipocategoria_nome']
+
+class ProdutoViewSet(viewsets.ModelViewSet):
+    queryset = Produto.objects.all().order_by('id')
+    serializer_class = ProdutoSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['nome','descricao']
+    ordering_fields = ['id','nome','valor']
+    ordering = ['nome']
+
+
+class ItemViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all().order_by('nome')
+    serializer_class = ItemSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["nome"]
+    ordering_fields = ["id","nome","valor"]
+    ordering = ["nome"]
+
+
+class TipoPagamentoViewSet(viewsets.ModelViewSet):
+    queryset = TipoPagamento.objects.all().order_by('nome')
+    serializer_class = TipoPagamentoSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["nome"]
+    ordering_fields = ["id","nome"]
+    ordering = ["nome"]
+
+
+class FormaPagamentoViewSet(viewsets.ModelViewSet):
+    queryset = FormaPagamento.objects.all().order_by('nome')
+    serializer_class = FormaPagamentoSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["nome"]
+    ordering_fields = ["id","nome"]
+    ordering = ["nome"]
+
+
+class EntradaViewSet(viewsets.ModelViewSet):
+    queryset = Entrada.objects.all().order_by('-data')
+    serializer_class = EntradaSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['descricao', 'formapagamento__nome', 'tipocategoria__nome']
     ordering_fields = ['data', 'valorTotal']
     ordering = ['-data']
+
+
+class SaidaViewSet(viewsets.ModelViewSet):
+    queryset = Saida.objects.all().order_by('-data')
+    serializer_class = SaidaSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['descricao', 'formapagamento__nome', 'tipocategoria__nome']
+    ordering_fields = ['data', 'valorTotal']
+    ordering = ['-data']
+
+
+class CompraViewSet(viewsets.ModelViewSet):
+    queryset = Compra.objects.all().order_by('-data')
+    serializer_class = CompraSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["descricao","formapagamento__nome","tipocategoria__nome"]
+    ordering_fields = ["data","valorTotal","frete","desconto"]
+    ordering = ["-data"]
+
+
+class ItemCompraViewSet(viewsets.ModelViewSet):
+    queryset = ItemCompra.objects.all()
+    serializer_class = ItemCompraSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["item__nome", "compra__descricao"]
+    ordering_fields = ["quantidade","valor_unitario"]
+    ordering = ["item__nome"]
+
+
+class VendaViewSet(viewsets.ModelViewSet):
+    queryset = Venda.objects.all().order_by('-data')
+    serializer_class = VendaSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["cliente__nome","formapagamento__nome","tipocategoria__nome"]
+    ordering_fields = ["data","valorTotal","frete","desconto"]
+    ordering = ["-data"]
+
+
+class ProdutoVendaViewSet(viewsets.ModelViewSet):
+    queryset = ProdutoVenda.objects.all()
+    serializer_class = ProdutoVendaSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["produto__nome","venda__cliente__nome"]
+    ordering_fields = ["quantidade","valor_unitario"]
+    ordering = ["produto__nome"]
