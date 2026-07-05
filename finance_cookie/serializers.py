@@ -11,7 +11,15 @@ from .models import (
     ItemCompra,
     Venda,
     ProdutoVenda,
+    Usuario,
 )
+
+from django.contrib.auth.hashers import make_password
+
+# US01 - Sem segurança/autenticação: não usada aqui por enquanto.
+
+
+
 
 
 class ProdutoSerializer(serializers.ModelSerializer):

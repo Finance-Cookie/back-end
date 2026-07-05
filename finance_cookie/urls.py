@@ -15,6 +15,12 @@ router.register(r'itemcompras', views.ItemCompraViewSet, basename='itemcompras')
 router.register(r'vendas', views.VendaViewSet, basename='vendas')
 router.register(r'produtovenda', views.ProdutoVendaViewSet, basename='produtovenda')
 
+from .users_views import UsersViewSet
+router.register(r'users', UsersViewSet, basename='users')
+
+
+
 urlpatterns = [
 	path('', include(router.urls)),
 ]
+
