@@ -6,15 +6,17 @@ from .models import Usuario
 from .serializers import UsuarioSerializer
 
 class UsersViewSet(viewsets.ModelViewSet):
-    queryset = Usuario.objects.all()
+    queryset = Usuario.objects.all().order_by('id')
     serializer_class = UsuarioSerializer
     permission_classes = [AllowAny]
 
-    # Simula o usuário logado pegando o primeiro registro do banco enquanto não há Auth
     def get_current_user(self):
+        """
+        Retorna ou cria o primeiro usuário do banco para simular a sessão
+        enquanto o módulo de autenticação não é implementado.
+        """
         user = Usuario.objects.first()
         if not user:
-            # Cria um usuário padrão caso o banco esteja vazio
             user = Usuario.objects.create(
                 nome="Usuário Padrão",
                 email="padrao@cookie.com",
@@ -26,6 +28,10 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get', 'put', 'patch'])
     def me(self, request):
+        """
+        Endpoint customizado para gerenciar os dados do próprio perfil.
+        Mapeia para /api/users/me/
+        """
         user = self.get_current_user()
         
         if request.method == 'GET':
@@ -33,7 +39,6 @@ class UsersViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
             
         elif request.method in ['PUT', 'PATCH']:
-            # Permite atualizar dados cadastrais ou saldos (como pedido nos testes)
             serializer = self.get_serializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -42,9 +47,12 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='register')
     def register(self, request):
+        """
+        Endpoint customizado para registro simplificado de novos usuários.
+        Mapeia para /api/users/register/
+        """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            # Criação simples (a criptografia da senha entrará no módulo de Auth posterior)
-            serializer.save(senha_hash="hash_provisoria")
+            serializer.save()
             return Response({"message": "Usuário cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

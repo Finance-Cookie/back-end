@@ -130,9 +130,11 @@ class VendaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    senha = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Usuario
-        fields = ['id', 'nome', 'email', 'saldo_fisico', 'saldo_online', 'criado_em']
+        fields = ['id', 'nome', 'email', 'saldo_fisico', 'saldo_online', 'criado_em', 'senha']
         read_only_fields = ['id', 'criado_em']
 
     def validate_nome(self, value):
@@ -149,3 +151,10 @@ class UsuarioSerializer(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError("O saldo online não pode ser negativo.")
         return value
+
+    def create(self, validated_data):
+        senha_pura = validated_data.pop('senha', 'hash_provisoria')
+        
+        validated_data['senha_hash'] = senha_pura
+        
+        return super().create(validated_data)
