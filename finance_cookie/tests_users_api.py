@@ -1,4 +1,4 @@
-from django.urls import reverse
+from django.urls import reverse, NoReverseMatch
 from rest_framework import status
 from rest_framework.test import APITestCase
 from decimal import Decimal
@@ -6,9 +6,17 @@ from .models import Usuario
 
 
 class UsersAPITest(APITestCase):
+    def _get_url(self, action_name):
+        """Helper para descobrir a URL correta independente do idioma do basename ou namespace"""
+        for pattern in [f'usuarios-{action_name}', f'users-{action_name}', f'api:usuarios-{action_name}', f'api:users-{action_name}']:
+            try:
+                return reverse(pattern)
+            except NoReverseMatch:
+                continue
+        raise NoReverseMatch(f"Não foi possível encontrar a rota para a action '{action_name}' usando basenames comuns.")
+
     def test_register_user_success(self):
-        # O Django usa o basename 'users' do seu router + o nome da action do método
-        url = reverse('users-register')
+        url = self._get_url('register')
         payload = {
             'nome': 'Elder',
             'email': 'elder@example.com',
@@ -20,9 +28,9 @@ class UsersAPITest(APITestCase):
         self.assertIn('message', resp.json())
 
     def test_register_user_invalid_fields(self):
-        url = reverse('users-register')
+        url = self._get_url('register')
         payload = {
-            'nome': '   ',  # Nome inválido (apenas espaços)
+            'nome': '   ',
             'email': 'elder2@example.com',
             'senha': '123456',
         }
@@ -30,20 +38,18 @@ class UsersAPITest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_me_get_and_put_flow(self):
-        # Cria usuário inicial no banco para testar o endpoint /me/
         u = Usuario.objects.create(
             nome='U1',
-            email='U1@EXAMPLE.COM ',  # Testando a limpeza automática de string
+            email='U1@EXAMPLE.COM ',
             senha_hash='hash',
         )
 
-        # Acessa a action customizada 'me' mapeada pelo router
-        url_me = reverse('users-me')
+        url_me = self._get_url('me')
 
         # 1. Testando o GET
         resp_get = self.client.get(url_me)
         self.assertEqual(resp_get.status_code, status.HTTP_200_OK)
-        self.assertEqual(resp_get.json()['email'], 'u1@example.com')  # Verificando se normalizou para minúsculo
+        self.assertEqual(resp_get.json()['email'], 'u1@example.com')
 
         # 2. Testando o PUT com valores válidos
         resp_put = self.client.put(
@@ -63,7 +69,7 @@ class UsersAPITest(APITestCase):
     def test_me_update_invalid_negative_balance(self):
         Usuario.objects.create(nome='Test User', email='test@example.com', senha_hash='hash')
 
-        url_me = reverse('users-me')
+        url_me = self._get_url('me')
 
         resp_put = self.client.put(
             url_me,
