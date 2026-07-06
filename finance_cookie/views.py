@@ -17,6 +17,7 @@ from .models import (
     ItemCompra,
     Venda,
     ProdutoVenda,
+    Historico,
 )
 from .serializers import (
     ClienteSerializer,
@@ -30,6 +31,7 @@ from .serializers import (
     ItemCompraSerializer,
     VendaSerializer,
     ProdutoVendaSerializer,
+    HistoricoSerializer,
 )
 
 
@@ -43,6 +45,15 @@ class ClienteViewSet(viewsets.ModelViewSet):
     ordering_fields = ['id','nome','bairro']
     ordering = ['nome']
 
+    def perform_create(self, serializer):
+        cliente = serializer.save()
+
+        Historico.objects.create(
+            tipo="CLIENTE",
+            descricao=f"Cliente criado: {cliente.nome}",
+            referencia_id=cliente.id
+        )
+
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all().order_by('id')
@@ -53,6 +64,15 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     search_fields = ['nome','descricao']
     ordering_fields = ['id','nome','valor']
     ordering = ['nome']
+
+    def perform_create(self, serializer):
+        produto = serializer.save()
+
+        Historico.objects.create(
+            tipo="PRODUTO",
+            descricao=f"Produto criado: {produto.nome}",
+            referencia_id=produto.id
+        )
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -65,6 +85,15 @@ class ItemViewSet(viewsets.ModelViewSet):
     ordering_fields = ["id","nome","valor"]
     ordering = ["nome"]
 
+    def perform_create(self, serializer):
+        item = serializer.save()
+
+        Historico.objects.create(
+            tipo="PRODUTO",
+            descricao=f"Item criado: {item.nome}",
+            referencia_id=item.id
+        )
+
 
 class TipoPagamentoViewSet(viewsets.ModelViewSet):
     queryset = TipoPagamento.objects.all().order_by('nome')
@@ -76,6 +105,14 @@ class TipoPagamentoViewSet(viewsets.ModelViewSet):
     ordering_fields = ["id","nome"]
     ordering = ["nome"]
 
+    def perform_create(self, serializer):
+        tp = serializer.save()
+
+        Historico.objects.create(
+            tipo="COMPRA",
+            descricao=f"Tipo de pagamento criado: {tp.nome}",
+            referencia_id=tp.id
+        )
 
 class FormaPagamentoViewSet(viewsets.ModelViewSet):
     queryset = FormaPagamento.objects.all().order_by('nome')
@@ -86,6 +123,15 @@ class FormaPagamentoViewSet(viewsets.ModelViewSet):
     search_fields = ["nome"]
     ordering_fields = ["id","nome"]
     ordering = ["nome"]
+
+    def perform_create(self, serializer):
+        fp = serializer.save()
+
+        Historico.objects.create(
+            tipo="COMPRA",
+            descricao=f"Forma de pagamento criada: {fp.nome}",
+            referencia_id=fp.id
+        )
 
 
 class EntradaViewSet(viewsets.ModelViewSet):
@@ -98,6 +144,15 @@ class EntradaViewSet(viewsets.ModelViewSet):
     ordering_fields = ['data', 'valorTotal']
     ordering = ['-data']
 
+    def perform_create(self, serializer):
+        entrada = serializer.save()
+
+        Historico.objects.create(
+            tipo="ENTRADA",
+            descricao=f"Entrada registrada: {entrada.descricao}",
+            referencia_id=entrada.id
+        )
+
 
 class SaidaViewSet(viewsets.ModelViewSet):
     queryset = Saida.objects.all().order_by('-data')
@@ -108,6 +163,15 @@ class SaidaViewSet(viewsets.ModelViewSet):
     search_fields = ['descricao', 'formapagamento__nome', 'tipocategoria__nome']
     ordering_fields = ['data', 'valorTotal']
     ordering = ['-data']
+
+    def perform_create(self, serializer):
+        saida = serializer.save()
+
+        Historico.objects.create(
+            tipo="SAIDA",
+            descricao=f"Saída registrada: {saida.descricao}",
+            referencia_id=saida.id
+        )
 
 
 class CompraViewSet(viewsets.ModelViewSet):
@@ -120,6 +184,15 @@ class CompraViewSet(viewsets.ModelViewSet):
     ordering_fields = ["data","valorTotal","frete","desconto"]
     ordering = ["-data"]
 
+    def perform_create(self, serializer):
+        compra = serializer.save()
+
+        Historico.objects.create(
+            tipo="COMPRA",
+            descricao=f"Compra registrada: {compra.descricao}",
+            referencia_id=compra.id
+        )
+
 
 class ItemCompraViewSet(viewsets.ModelViewSet):
     queryset = ItemCompra.objects.all()
@@ -130,6 +203,15 @@ class ItemCompraViewSet(viewsets.ModelViewSet):
     search_fields = ["item__nome", "compra__descricao"]
     ordering_fields = ["quantidade","valor_unitario"]
     ordering = ["item__nome"]
+
+    def perform_create(self, serializer):
+        ic = serializer.save()
+
+        Historico.objects.create(
+            tipo="COMPRA",
+            descricao=f"Item adicionado na compra ID {ic.compra.id}",
+            referencia_id=ic.id
+        )
 
 
 class VendaViewSet(viewsets.ModelViewSet):
@@ -142,6 +224,15 @@ class VendaViewSet(viewsets.ModelViewSet):
     ordering_fields = ["data","valorTotal","frete","desconto"]
     ordering = ["-data"]
 
+    def perform_create(self, serializer):
+        venda = serializer.save()
+
+        Historico.objects.create(
+            tipo="VENDA",
+            descricao=f"Venda registrada para {venda.cliente.nome}",
+            referencia_id=venda.id
+        )
+
 
 class ProdutoVendaViewSet(viewsets.ModelViewSet):
     queryset = ProdutoVenda.objects.all()
@@ -152,6 +243,15 @@ class ProdutoVendaViewSet(viewsets.ModelViewSet):
     search_fields = ["produto__nome","venda__cliente__nome"]
     ordering_fields = ["quantidade","valor_unitario"]
     ordering = ["produto__nome"]
+
+    def perform_create(self, serializer):
+        pv = serializer.save()
+
+        Historico.objects.create(
+            tipo="VENDA",
+            descricao=f"Produto adicionado na venda ID {pv.venda.id}",
+            referencia_id=pv.id
+        )
 
 
 class RelatorioViewSet(viewsets.ViewSet):
@@ -339,3 +439,13 @@ class RelatorioViewSet(viewsets.ViewSet):
                 for s in saidas
             ]
         })
+    
+
+class HistoricoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Historico.objects.all().order_by("-data")
+    serializer_class = HistoricoSerializer
+    permission_classes = [AllowAny]
+
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["tipo", "descricao"]
+    ordering_fields = ["data"]

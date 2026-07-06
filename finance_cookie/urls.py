@@ -16,6 +16,7 @@ router.register(r'vendas', views.VendaViewSet, basename='vendas')
 router.register(r'produtovenda', views.ProdutoVendaViewSet, basename='produtovenda')
 router.register(r'users', users_views.UsersViewSet, basename='users')
 router.register(r'relatorios', views.RelatorioViewSet, basename='relatorios')
+router.register(r"historico", views.HistoricoViewSet, basename="historico")
 
 urlpatterns = [
 	path('', include(router.urls)),
