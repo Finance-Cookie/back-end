@@ -229,5 +229,16 @@ class Usuario(models.Model):
     saldo_fisico = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     saldo_online = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def clean(self):
+        if not self.nome or not self.nome.strip():
+            raise ValidationError({'nome': 'O nome do usuário é obrigatório.'})
+
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.strip().lower()
+            
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.nome
