@@ -38,7 +38,8 @@ class UsersAPITest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_me_get_and_put_flow(self):
-        u = Usuario.objects.create(
+        # Corrigido: Removida a variável não utilizada 'u'
+        Usuario.objects.create(
             nome='U1',
             email='U1@EXAMPLE.COM ',
             senha_hash='hash',
