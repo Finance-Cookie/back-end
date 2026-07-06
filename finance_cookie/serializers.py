@@ -128,3 +128,24 @@ class VendaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venda
         fields = '__all__'
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'nome', 'email', 'saldo_fisico', 'saldo_online', 'criado_em']
+        read_only_fields = ['id', 'criado_em']
+
+    def validate_nome(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("O nome não pode ser composto apenas por espaços.")
+        return value.strip()
+
+    def validate_saldo_fisico(self, value):
+        if value < 0:
+            raise serializers.ValidationError("O saldo físico não pode ser negativo.")
+        return value
+
+    def validate_saldo_online(self, value):
+        if value < 0:
+            raise serializers.ValidationError("O saldo online não pode ser negativo.")
+        return value
