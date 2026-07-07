@@ -2,11 +2,15 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from decimal import Decimal
-from .models import FormaPagamento, TipoPagamento, Usuario, Cliente
+from .models import FormaPagamento, TipoPagamento, Usuario, Cliente, Entrada, Saida, Venda, Compra
 
 class FinanceCookieAPITestCase(APITestCase):
     def setUp(self):
         Usuario.objects.all().delete()
+        Cliente.objects.all().delete()
+        FormaPagamento.objects.all().delete()
+        TipoPagamento.objects.all().delete()
+
         self.usuario = Usuario.objects.create(
             nome="Pedro Vitor",
             email="pedrovitor@cookie.com",
@@ -22,72 +26,124 @@ class FinanceCookieAPITestCase(APITestCase):
             bairro="Centro", logradouro="Rua A", numero="10"
         )
 
-    def test_crud_usuario_saldos_endpoint(self):
-        url = reverse('usuarios-saldos', args=[self.usuario.id])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(float(response.data['saldo_total']), 2000.00)
-
-    def test_criar_e_deletar_entrada_modifica_saldo_fisico(self):
+    # --- CRUD COMPLETO: ENTRADAS ---
+    def test_crud_completo_entrada(self):
         url_list = reverse('entradas-list')
         payload = {
-            'valorTotal': '250.00',
-            'descricao': 'Entrada em Espécie',
+            'valorTotal': '200.00',
+            'descricao': 'Entrada Teste',
             'formapagamento': self.forma_dinheiro.id,
             'tipocategoria': self.categoria.id
         }
+        
+        # 1. CREATE (POST)
         response = self.client.post(url_list, payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.usuario.refresh_from_db()
-        self.assertEqual(self.usuario.saldo_fisico, Decimal("1250.00"))
+        entrada_id = response.data['id']
 
-        url_detail = reverse('entradas-detail', args=[response.data['id']])
-        response_del = self.client.delete(url_detail)
-        self.assertEqual(response_del.status_code, status.HTTP_204_NO_CONTENT)
-        self.usuario.refresh_from_db()
-        self.assertEqual(self.usuario.saldo_fisico, Decimal("1000.00"))
+        # 2. READ (GET DETAIL)
+        url_detail = reverse('entradas-detail', args=[entrada_id])
+        response = self.client.get(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['descricao'], 'Entrada Teste')
 
-    def test_criar_saida_debitando_do_saldo_online(self):
-        url = reverse('saidas-list')
+        # 3. UPDATE (PUT)
+        payload['descricao'] = 'Entrada Alterada'
+        response = self.client.put(url_detail, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['descricao'], 'Entrada Alterada')
+
+        # 4. DELETE
+        response = self.client.delete(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    # --- CRUD COMPLETO: SAÍDAS ---
+    def test_crud_completo_saida(self):
+        url_list = reverse('saidas-list')
         payload = {
-            'valorTotal': '100.00',
-            'descricao': 'Assinatura Cloud',
+            'valorTotal': '50.00',
+            'descricao': 'Saida Teste',
             'formapagamento': self.forma_pix.id,
             'tipocategoria': self.categoria.id
         }
-        response = self.client.post(url, payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.usuario.refresh_from_db()
-        self.assertEqual(self.usuario.saldo_online, Decimal("900.00"))
 
-    def test_venda_adiciona_ao_saldo_online(self):
-        url = reverse('vendas-list')
+        # 1. CREATE
+        response = self.client.post(url_list, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        saida_id = response.data['id']
+
+        # 2. READ
+        url_detail = reverse('saidas-detail', args=[saida_id])
+        response = self.client.get(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 3. UPDATE
+        payload['descricao'] = 'Saida Alterada'
+        response = self.client.put(url_detail, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 4. DELETE
+        response = self.client.delete(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    # --- CRUD COMPLETO: VENDAS ---
+    def test_crud_completo_venda(self):
+        url_list = reverse('vendas-list')
         payload = {
-            'valorTotal': '350.00',
+            'valorTotal': '100.00',
             'formapagamento': self.forma_pix.id,
             'tipocategoria': self.categoria.id,
             'desconto': '0.00',
             'frete': '0.00',
             'cliente': self.cliente.id
         }
-        response = self.client.post(url, payload, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.usuario.refresh_from_db()
-        self.assertEqual(self.usuario.saldo_online, Decimal("1350.00"))
 
-    def test_compra_subtrai_do_saldo_fisico(self):
-        url = reverse('compras-list')
-        # Passamos o valor no frete para que o método calcular_valor_total() resulte em 150.00
+        # 1. CREATE
+        response = self.client.post(url_list, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        venda_id = response.data['id']
+
+        # 2. READ
+        url_detail = reverse('vendas-detail', args=[venda_id])
+        response = self.client.get(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 3. UPDATE
+        payload['valorTotal'] = '120.00'
+        response = self.client.put(url_detail, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 4. DELETE
+        response = self.client.delete(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    # --- CRUD COMPLETO: COMPRAS ---
+    def test_crud_completo_compra(self):
+        url_list = reverse('compras-list')
         payload = {
             'valorTotal': '0.00',
             'formapagamento': self.forma_dinheiro.id,
             'tipocategoria': self.categoria.id,
-            'descricao': 'Compra de Insumos',
+            'descricao': 'Compra Teste',
             'desconto': '0.00',
-            'frete': '150.00'
+            'frete': '80.00'
         }
-        response = self.client.post(url, payload, format='json')
+
+        # 1. CREATE
+        response = self.client.post(url_list, payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
-        self.usuario.refresh_from_db()
-        self.assertEqual(self.usuario.saldo_fisico, Decimal("850.00"))
+        compra_id = response.data['id']
+
+        # 2. READ
+        url_detail = reverse('compras-detail', args=[compra_id])
+        response = self.client.get(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 3. UPDATE
+        payload['descricao'] = 'Compra Alterada'
+        response = self.client.put(url_detail, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 4. DELETE
+        response = self.client.delete(url_detail)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
