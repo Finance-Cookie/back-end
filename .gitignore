@@ -8,11 +8,10 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
-develop-eggs/
 dist/
+develop-eggs/
 downloads/
-eggs/
+eg eggs/
 .eggs/
 lib/
 lib64/
@@ -44,7 +43,6 @@ htmlcov/
 .coverage.*
 .cache
 nosetests.xml
-coverage.xml
 *.cover
 *.py.cover
 .hypothesis/
@@ -111,7 +109,6 @@ ipython_config.py
 # pdm
 #   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
 #   pdm recommends including project-wide configuration in pdm.toml, but excluding .pdm-python.
-#   https://pdm-project.org/en/latest/usage/project/#working-with-version-control
 #pdm.lock
 #pdm.toml
 .pdm-python
@@ -181,13 +178,6 @@ cython_debug/
 # Learn more at https://abstra.io/docs
 .abstra/
 
-# Visual Studio Code
-#  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
-#  that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#  and can be added to the global gitignore or merged into this file. However, if you prefer, 
-#  you could uncomment the following to ignore the entire vscode folder
-# .vscode/
-
 # Ruff stuff:
 .ruff_cache/
 
@@ -205,3 +195,7 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Finance-Cookie custom
+TODO.md
+

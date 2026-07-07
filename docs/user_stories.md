@@ -59,10 +59,10 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **Estimativa**          | 6 h       |
 | **Tempo Gasto (real):** |           |
 | **Tamanho Funcional**   | 5 PF      |
-| **Analista**            | Elder     |
-| **Desenvolvedor**       | Pedro     |
-| **Revisor**             | Felipe    |
-| **Testador**            | Elder     |
+| **Analista**            | Felipe     |
+| **Desenvolvedor**       | Elder     |
+| **Revisor**             | Pedro    |
+| **Testador**            | Felipe     |
 
 ---
 
@@ -154,10 +154,10 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **Estimativa**            | 8 h                                 | 
 | **Tempo Gasto (real):**   |                                     | 
 | **Tamanho Funcional**     | 8 PF                                | 
-| **Analista**              | Elder                               | 
-| **Desenvolvedor**         | Pedro                               | 
+| **Analista**              | Pedro                               | 
+| **Desenvolvedor**         | Elder                               | 
 | **Revisor**               | Felipe                              | 
-| **Testador**              | Elder                               | 
+| **Testador**              | Pedro                               | 
 
 
 | Testes de Aceitação (TA) |  |
@@ -199,6 +199,37 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **TA05.04** | O administrador seleciona uma compra para visualizar e o sistema exibe detalhadamente todos os dados, incluindo a lista de itens comprados. |
 | **TA05.05** | O administrador solicita a exclusão de uma compra realizada no mesmo dia (até as 23h59) e o sistema exibe a mensagem: Compra excluída com sucesso! |
 | **TA05.06** | O administrador tenta excluir uma compra realizada em data anterior à atual e o sistema exibe a mensagem: Não é possível excluir esta compra após o prazo permitido. |
+
+
+### User Story US06 - Manter Item
+
+
+| **Descrição** | O sistema deve permitir manter o cadastro de itens/serviços com os atributos: Nome e Valor. Os itens poderão ser incluídos, alterados, listados, visualizados e excluídos. |
+
+| **Requisitos envolvidos** |                                                    |
+| ------------- | :------------------------------------------------------------- |
+| RF04          | Manter Item |
+
+| ------------------------- | ----------------------------------- | 
+| **Prioridade**            | Essencial                           | 
+| **Estimativa**            | 4 h                                 | 
+| **Tempo Gasto (real):**   |                                     | 
+| **Tamanho Funcional**     | 3 PF                                | 
+| **Analista**              | Elder                               | 
+| **Desenvolvedor**         | Pedro                                  | 
+| **Revisor**               | Felipe                               | 
+| **Testador**              | Elder                                | 
+
+
+| Testes de Aceitação (TA) |  |
+| ----------- | --------- |
+| **Código**      | **Descrição** |
+| **TA06.01** | São informados Nome e Valor na tela de cadastro de item e clicado em Salvar. O sistema exibe: Item cadastrado com sucesso! |
+| **TA06.02** | São informados dados inválidos ou incompletos e clicado em Salvar. O sistema exibe: Informações incorretas, tente novamente! |
+| **TA06.03** | A listagem de itens é acessada e todos os itens cadastrados são visualizados. |
+| **TA06.04** | Um item é selecionado e seus detalhes (Nome e Valor) são visualizados. |
+| **TA06.05** | Os dados de um item são alterados e clicado em Salvar. O sistema exibe: Item atualizado com sucesso! |
+| **TA06.06** | Um item é excluído e o sistema exibe: Item excluído com sucesso! |
 
 
 ### User Story US07 - Manter Tipo
@@ -246,8 +277,8 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 | **Tempo Gasto (real):**   |                                     | 
 | **Tamanho Funcional**     | 6 PF                                | 
 | **Analista**              | Pedro                               | 
-| **Desenvolvedor**         | Elder                               | 
-| **Revisor**               | Felipe                              | 
+| **Desenvolvedor**         | Felipe                               | 
+| **Revisor**               | Elder                              | 
 | **Testador**              | Pedro                               | 
 
 
