@@ -15,14 +15,6 @@ from .models import (
     Historico,
 )
 
-from django.contrib.auth.hashers import make_password
-
-# US01 - Sem segurança/autenticação: não usada aqui por enquanto.
-
-
-
-
-
 class ProdutoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Produto
@@ -54,12 +46,12 @@ class ClienteSerializer(serializers.ModelSerializer):
             valor = attrs.get(campo)
             if valor is not None:
                 valor = str(valor).strip()
-                if not valor:
+                if not valor and not self.partial:  # Só barra se não for um update parcial (PATCH)
                     raise serializers.ValidationError({
                         campo: 'Este campo é obrigatório.'
                     })
-
-                attrs[campo] = valor
+                if valor:
+                    attrs[campo] = valor
 
         email = attrs.get('email')
         if email is not None:
@@ -130,11 +122,13 @@ class VendaSerializer(serializers.ModelSerializer):
         model = Venda
         fields = '__all__'
 
+
 class HistoricoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Historico
         fields = "__all__"
         
+
 class UsuarioSerializer(serializers.ModelSerializer):
     senha = serializers.CharField(write_only=True, required=False)
 
@@ -160,7 +154,5 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         senha_pura = validated_data.pop('senha', 'hash_provisoria')
-        
         validated_data['senha_hash'] = senha_pura
-        
         return super().create(validated_data)
