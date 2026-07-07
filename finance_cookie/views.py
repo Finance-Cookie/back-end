@@ -148,9 +148,11 @@ class RelatorioViewSet(viewsets.ViewSet):
     def financeiro_por_categoria(self, request):
         entradas = Entrada.objects.values("tipocategoria__nome").annotate(total=Sum("valorTotal")).order_by("-total")
         saidas = Saida.objects.values("tipocategoria__nome").annotate(total=Sum("valorTotal")).order_by("-total")
+        
         return Response({
             "entradas": [{"categoria": e["tipocategoria__nome"], "total": e["total"]} for e in entradas],
-            "saidas": [{"categoria": s["tipocategoria__nome"], "total": s["total"]} for e in saidas]
+            # CORRIGIDO: mudado de 's' e 'e' para usar apenas 's' de forma consistente
+            "saidas": [{"categoria": s["tipocategoria__nome"], "total": s["total"]} for s in saidas]
         })
 
 class HistoricoViewSet(viewsets.ReadOnlyModelViewSet):

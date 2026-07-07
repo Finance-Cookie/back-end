@@ -77,15 +77,16 @@ class FinanceCookieAPITestCase(APITestCase):
 
     def test_compra_subtrai_do_saldo_fisico(self):
         url = reverse('compras-list')
+        # Passamos o valor no frete para que o método calcular_valor_total() resulte em 150.00
         payload = {
-            'valorTotal': '150.00',
+            'valorTotal': '0.00',
             'formapagamento': self.forma_dinheiro.id,
             'tipocategoria': self.categoria.id,
-            'descricao': 'Compra de Insumos'
+            'descricao': 'Compra de Insumos',
+            'desconto': '0.00',
+            'frete': '150.00'
         }
         response = self.client.post(url, payload, format='json')
-        
-        # Se falhar aqui, o Django Rest vai mostrar no console exatamente qual campo do serializer faltou preencher!
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         
         self.usuario.refresh_from_db()
