@@ -14,6 +14,7 @@ class FinanceCookieAPITestCase(APITestCase):
             saldo_fisico=Decimal("1000.00"),
             saldo_online=Decimal("1000.00")
         )
+        # Mantendo "Dinheiro Físico" explícito para cair no bloco else do validador de saldos
         self.forma_dinheiro = FormaPagamento.objects.create(nome="Dinheiro Físico")
         self.forma_pix = FormaPagamento.objects.create(nome="Pix Online")
         self.categoria = TipoPagamento.objects.create(nome="Geral Operacional")

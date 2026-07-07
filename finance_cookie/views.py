@@ -20,14 +20,10 @@ class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all().order_by('id')
     serializer_class = ClienteSerializer
     permission_classes = [AllowAny]
-
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nome','email','telefone','bairro','logradouro']
     ordering_fields = ['id','nome','bairro']
     ordering = ['nome']
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all().order_by('id')
@@ -49,8 +45,9 @@ class FormaPagamentoViewSet(viewsets.ModelViewSet):
     serializer_class = FormaPagamentoSerializer
     permission_classes = [AllowAny]
 
-# --- FUNÇÃO DE NEGÓCIO DE ATUALIZAÇÃO DE SALDO ---
+# --- ATUALIZAÇÃO AUTOMÁTICA DE SALDO DE ACORDO COM AS USER STORIES ---
 def atualizar_saldo_usuario(forma_pagamento, valor, operacao):
+    # Usa select_for_update para travar a linha no banco e garantir consistência atômica
     usuario = Usuario.objects.select_for_update().first()
     if not usuario:
         return
