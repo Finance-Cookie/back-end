@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import *
+from .models import Cliente, Produto, TipoPagamento, Item, FormaPagamento, Saida, Entrada, Compra, ItemCompra, Venda, ProdutoVenda
 
 admin.site.register(Cliente)
 admin.site.register(Produto)
