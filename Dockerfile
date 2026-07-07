@@ -6,20 +6,18 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Instala dependências do sistema necessárias para o PostgreSQL (psycopg2)
+# Instala dependências do sistema e cria o usuário não-root em uma única camada (Otimização de Layers)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -u 5678 --create-home django-user
 
 # Copia e instala os requisitos do Python
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Cria um usuário de sistema sem privilégios para rodar o app de forma segura
-RUN useradd -u 5678 --disabled-password --gecos "" django-user
-
-# Copia o restante do código e define o dono como o novo usuário
+# Copia o código definindo o dono (protegido pelo .dockerignore contra dados sensíveis)
 COPY --chown=django-user:django-user . /app/
 
 # Altera para o usuário não-root antes de rodar o comando principal
