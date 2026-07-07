@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -13,64 +13,21 @@ from .serializers import (
     ClienteSerializer, ProdutoSerializer, ItemSerializer,
     TipoPagamentoSerializer, FormaPagamentoSerializer, EntradaSerializer,
     SaidaSerializer, CompraSerializer, ItemCompraSerializer,
-    VendaSerializer, ProdutoVendaSerializer, HistoricoSerializer, UsuarioSerializer
+    VendaSerializer, ProdutoVendaSerializer, HistoricoSerializer
 )
-
-class UsersViewSet(viewsets.ModelViewSet):
-    queryset = Usuario.objects.all().order_by('id')
-    serializer_class = UsuarioSerializer
-    permission_classes = [AllowAny]
-
-    def get_current_user(self):
-        user = Usuario.objects.first()
-        if not user:
-            user = Usuario.objects.create(
-                nome="Usuário Padrão",
-                email="padrao@cookie.com",
-                senha_hash="hash_provisoria",
-                saldo_fisico=0.0,
-                saldo_online=0.0
-            )
-        return user
-
-    @action(detail=False, methods=['get', 'put', 'patch'])
-    def me(self, request):
-        user = self.get_current_user()
-        if request.method == 'GET':
-            serializer = self.get_serializer(user)
-            return Response(serializer.data)
-        elif request.method in ['PUT', 'PATCH']:
-            serializer = self.get_serializer(user, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=['post'], url_path='register')
-    def register(self, request):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Usuário cadastrado com sucesso!"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=['get'])
-    def saldos(self, request, pk=None):
-        usuario = self.get_object()
-        return Response({
-            'saldo_fisico': usuario.saldo_fisico,
-            'saldo_online': usuario.saldo_online,
-            'saldo_total': usuario.saldo_fisico + usuario.saldo_online
-        })
 
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all().order_by('id')
     serializer_class = ClienteSerializer
     permission_classes = [AllowAny]
+
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nome','email','telefone','bairro','logradouro']
     ordering_fields = ['id','nome','bairro']
     ordering = ['nome']
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all().order_by('id')
@@ -92,13 +49,14 @@ class FormaPagamentoViewSet(viewsets.ModelViewSet):
     serializer_class = FormaPagamentoSerializer
     permission_classes = [AllowAny]
 
+# --- FUNÇÃO DE NEGÓCIO DE ATUALIZAÇÃO DE SALDO ---
 def atualizar_saldo_usuario(forma_pagamento, valor, operacao):
-    usuario = Usuario.objects.first()
+    usuario = Usuario.objects.select_for_update().first()
     if not usuario:
         return
     
     nome_forma = forma_pagamento.nome.upper()
-    is_online = any(term in nome_forma for term in ["ONLINE", "PIX", "CARTÃO", "CARTAO", "TESTE"])
+    is_online = any(termo in nome_forma for termo in ["ONLINE", "PIX", "CARTÃO", "CARTAO", "TESTE"])
 
     if operacao == 'soma':
         if is_online:
@@ -183,16 +141,23 @@ class ProdutoVendaViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoVendaSerializer
     permission_classes = [AllowAny]
 
+class RelatorioViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+
+    @action(detail=False, methods=["get"])
+    def faturamento_por_mes(self, request):
+        return Response({"vendas_por_mes": []})
+
+    @action(detail=False, methods=["get"])
+    def financeiro_por_categoria(self, request):
+        entradas = Entrada.objects.values("tipocategoria__nome").annotate(total=Sum("valorTotal")).order_by("-total")
+        saidas = Saida.objects.values("tipocategoria__nome").annotate(total=Sum("valorTotal")).order_by("-total")
+        return Response({
+            "entradas": [{"categoria": e["tipocategoria__nome"], "total": e["total"]} for e in entradas],
+            "saidas": [{"categoria": s["tipocategoria__nome"], "total": s["total"]} for e in saidas]
+        })
+
 class HistoricoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Historico.objects.all().order_by("-data")
     serializer_class = HistoricoSerializer
     permission_classes = [AllowAny]
-
-class RelatorioViewSet(viewsets.ViewSet):
-    permission_classes = [AllowAny]
-    @action(detail=False, methods=["get"])
-    def faturamento_por_mes(self, request):
-        return Response({"vendas_por_mes": []})
-    @action(detail=False, methods=["get"])
-    def financeiro_por_categoria(self, request):
-        return Response({"entradas": [], "saidas": []})

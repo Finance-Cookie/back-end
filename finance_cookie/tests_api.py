@@ -14,7 +14,7 @@ class FinanceCookieAPITestCase(APITestCase):
             saldo_fisico=Decimal("1000.00"),
             saldo_online=Decimal("1000.00")
         )
-        self.forma_dinheiro = FormaPagamento.objects.create(nome="Dinheiro")
+        self.forma_dinheiro = FormaPagamento.objects.create(nome="Dinheiro Físico")
         self.forma_pix = FormaPagamento.objects.create(nome="Pix Online")
         self.categoria = TipoPagamento.objects.create(nome="Geral Operacional")
         self.cliente = Cliente.objects.create(
@@ -81,10 +81,9 @@ class FinanceCookieAPITestCase(APITestCase):
             'valorTotal': '150.00',
             'formapagamento': self.forma_dinheiro.id,
             'tipocategoria': self.categoria.id,
-            'descricao': 'Compra insumos de teste'
+            'descricao': 'Compra de Insumos'
         }
         response = self.client.post(url, payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        
         self.usuario.refresh_from_db()
         self.assertEqual(self.usuario.saldo_fisico, Decimal("850.00"))
