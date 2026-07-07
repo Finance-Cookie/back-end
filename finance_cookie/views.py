@@ -47,12 +47,12 @@ class FormaPagamentoViewSet(viewsets.ModelViewSet):
 
 # --- ATUALIZAÇÃO AUTOMÁTICA DE SALDO DE ACORDO COM AS USER STORIES ---
 def atualizar_saldo_usuario(forma_pagamento, valor, operacao):
-    # Usa select_for_update para travar a linha no banco e garantir consistência atômica
-    usuario = Usuario.objects.select_for_update().first()
+    # Tenta buscar o primeiro usuário do banco. Se não existir, evita o crash.
+    usuario = Usuario.objects.first()
     if not usuario:
         return
     
-    nome_forma = forma_pagamento.nome.upper()
+    nome_forma = forma_pagamento.nome.upper() if forma_pagamento else ""
     is_online = any(termo in nome_forma for termo in ["ONLINE", "PIX", "CARTÃO", "CARTAO", "TESTE"])
 
     if operacao == 'soma':
@@ -66,7 +66,8 @@ def atualizar_saldo_usuario(forma_pagamento, valor, operacao):
         else:
             usuario.saldo_fisico -= valor
             
-    usuario.save()
+    # Salva usando update_fields força o Django a disparar um UPDATE direto na linha do banco
+    usuario.save(update_fields=['saldo_fisico', 'saldo_online'])
 
 class EntradaViewSet(viewsets.ModelViewSet):
     queryset = Entrada.objects.all().order_by('-id')

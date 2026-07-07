@@ -86,5 +86,7 @@ class FinanceCookieAPITestCase(APITestCase):
         }
         response = self.client.post(url, payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Força o recarregamento dos valores gravados na tabela de teste
         self.usuario.refresh_from_db()
         self.assertEqual(self.usuario.saldo_fisico, Decimal("850.00"))
