@@ -1,0 +1,32 @@
+name: Build and Analyze
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test-and-sonar:
+    name: Test Coverage & SonarQube Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Baixa o código do repositório
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Sobe o banco e roda os testes com coverage dentro do container Docker
+      - name: Run Tests and Generate Coverage
+        run: |
+          docker-compose run --rm web sh -c "coverage run --source='.' manage.py test && coverage xml"
+
+      # 3. Executa o scanner do SonarQube puxando o coverage.xml gerado
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
