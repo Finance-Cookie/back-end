@@ -81,9 +81,10 @@ class FinanceCookieAPITestCase(APITestCase):
             'valorTotal': '150.00',
             'formapagamento': self.forma_dinheiro.id,
             'tipocategoria': self.categoria.id,
-            'descricao': 'Compra insumos'
+            'descricao': 'Compra insumos de teste'
         }
         response = self.client.post(url, payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
         self.usuario.refresh_from_db()
         self.assertEqual(self.usuario.saldo_fisico, Decimal("850.00"))

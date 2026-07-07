@@ -96,8 +96,9 @@ def atualizar_saldo_usuario(forma_pagamento, valor, operacao):
     usuario = Usuario.objects.first()
     if not usuario:
         return
+    
     nome_forma = forma_pagamento.nome.upper()
-    is_online = "ONLINE" in nome_forma or "PIX" in nome_forma or "CARTÃO" in nome_forma or "TESTE" in nome_forma
+    is_online = any(term in nome_forma for term in ["ONLINE", "PIX", "CARTÃO", "CARTAO", "TESTE"])
 
     if operacao == 'soma':
         if is_online:
@@ -109,6 +110,7 @@ def atualizar_saldo_usuario(forma_pagamento, valor, operacao):
             usuario.saldo_online -= valor
         else:
             usuario.saldo_fisico -= valor
+            
     usuario.save()
 
 class EntradaViewSet(viewsets.ModelViewSet):
