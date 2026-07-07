@@ -13,19 +13,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && useradd -u 5678 --create-home django-user
 
-# Copia e instala os requisitos do Python
+# Copia e instala os requisitos (permanece pertencendo ao root, apenas leitura)
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia explicitamente apenas os arquivos e pastas necessários do Django
-COPY --chown=django-user:django-user manage.py /app/
-COPY --chown=django-user:django-user config/ /app/config/
-COPY --chown=django-user:django-user finance_cookie/ /app/finance_cookie/
+# CORREÇÃO SONAR: Copia como root. O django-user conseguirá ler e executar, mas não modificar os arquivos fonte.
+COPY manage.py /app/
+COPY config/ /app/config/
+COPY finance_cookie/ /app/finance_cookie/
 
 # Altera para o usuário não-root antes de rodar o comando principal
 USER django-user
 
 EXPOSE 8000
 
-# CORREÇÃO SONAR: Sintaxe baseada em vetor para o CMD
+# Sintaxe baseada em vetor para o CMD conforme exigido pelas regras do Sonar
 CMD ["/bin/sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
