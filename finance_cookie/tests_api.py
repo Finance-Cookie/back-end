@@ -1,159 +1,81 @@
-from decimal import Decimal
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from decimal import Decimal
+from .models import FormaPagamento, TipoPagamento, Usuario, Entrada, Saida, Venda, Compra
 
-from .models import (
-    Cliente,
-    Produto,
-    Item,
-    TipoPagamento,
-    FormaPagamento,
-)
+class FinanceCookieAPITestCase(APITestCase):
+    def setUp(self):
+        self.usuario = Usuario.objects.create(
+            nome="Pedro Vitor",
+            email="pedrovitor@cookie.com",
+            senha_hash="pbkdf2_sha256$hash",
+            saldo_fisico=Decimal("1000.00"),
+            saldo_online=Decimal("1000.00")
+        )
+        
+        self.forma_dinheiro = FormaPagamento.objects.create(nome="Dinheiro Físico")
+        self.forma_pix = FormaPagamento.objects.create(nome="Pix Online")
+        self.categoria = TipoPagamento.objects.create(nome="Operacional")
 
+    def test_crud_usuario_saldos_endpoint(self):
+        url = reverse('usuarios-saldos', args=[self.usuario.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(float(response.data['saldo_total']), 2000.00)
 
-class ClientsProductsAPITest(APITestCase):
-    def test_list_clients(self):
-        Cliente.objects.create(nome='A', email='a@example.com', telefone='1', bairro='X', logradouro='Y', numero='10')
-        url = reverse('clientes-list')
-        resp = self.client.get(url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = resp.json()
-        self.assertIn('results', data)
-        self.assertIsInstance(data['results'], list)
-
-    def test_create_client(self):
-        url = reverse('clientes-list')
+    def test_criar_e_deletar_entrada_modifica_saldo_fisico(self):
+        url_list = reverse('entradas-list')
         payload = {
-            'nome': 'Novo',
-            'email': 'novo@example.com',
-            'telefone': '99',
-            'bairro': 'B',
-            'logradouro': 'L',
-            'numero': '1'
+            'valorTotal': '250.00',
+            'descricao': 'Entrada em Espécie',
+            'formapagamento': self.forma_dinheiro.id,
+            'tipocategoria': self.categoria.id
         }
-        resp = self.client.post(url, payload, format='json')
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Cliente.objects.filter(email='novo@example.com').count(), 1)
+        # Create
+        response = self.client.post(url_list, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.usuario.refresh_from_db()
+        self.assertEqual(self.usuario.saldo_fisico, Decimal("1250.00"))
 
-    def test_list_products(self):
-        Produto.objects.create(nome='P', valor=Decimal('9.99'), descricao='d')
-        url = reverse('produtos-list')
-        resp = self.client.get(url)
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = resp.json()
-        self.assertIn('results', data)
-        self.assertIsInstance(data['results'], list)
+        # Delete (Estorno)
+        url_detail = reverse('entradas-detail', args=[response.data['id']])
+        response_del = self.client.delete(url_detail)
+        self.assertEqual(response_del.status_code, status.HTTP_204_NO_CONTENT)
+        self.usuario.refresh_from_db()
+        self.assertEqual(self.usuario.saldo_fisico, Decimal("1000.00"))
 
-    def test_create_product(self):
-        url = reverse('produtos-list')
-        payload = {'nome': 'Prod', 'valor': '12.5', 'descricao': 'desc'}
-        resp = self.client.post(url, payload, format='json')
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Produto.objects.filter(nome='Prod').count(), 1)
-
-    def test_item_and_tipo_and_forma_endpoints(self):
-        # Item
-        url_item = reverse('items-list')
-        payload_item = {'nome': 'Serviço A', 'valor': '15.00'}
-        resp_item = self.client.post(url_item, payload_item, format='json')
-        self.assertEqual(resp_item.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(Item.objects.exists())
-
-        # TipoPagamento
-        url_tipo = reverse('tipospagamento-list')
-        payload_tipo = {'nome': 'OperaçãoTeste'}
-        resp_tipo = self.client.post(url_tipo, payload_tipo, format='json')
-        self.assertEqual(resp_tipo.status_code, status.HTTP_201_CREATED)
-
-        # FormaPagamento
-        url_forma = reverse('formaspagamento-list')
-        payload_forma = {'nome': 'Dinheiro'}
-        resp_forma = self.client.post(url_forma, payload_forma, format='json')
-        self.assertEqual(resp_forma.status_code, status.HTTP_201_CREATED)
-
-    def test_entrada_saida_flow(self):
-        tipo = TipoPagamento.objects.create(nome='TesteEntrada')
-        forma = FormaPagamento.objects.create(nome='PIX')
-
-        # Entrada
-        url_ent = reverse('entradas-list')
-        payload_ent = {
-            'descricao': 'Entrada X',
+    def test_criar_saida_debitando_do_saldo_online(self):
+        url = reverse('saidas-list')
+        payload = {
             'valorTotal': '100.00',
-            'formapagamento': forma.id,
-            'tipocategoria': tipo.id,
+            'descricao': 'Assinatura Cloud Pix',
+            'formapagamento': self.forma_pix.id,
+            'tipocategoria': self.categoria.id
         }
-        resp_ent = self.client.post(url_ent, payload_ent, format='json')
-        self.assertEqual(resp_ent.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.usuario.refresh_from_db()
+        self.assertEqual(self.usuario.saldo_online, Decimal("900.00"))
 
-        # Saida
-        url_sai = reverse('saidas-list')
-        payload_sai = {
-            'descricao': 'Saida X',
-            'valorTotal': '50.00',
-            'formapagamento': forma.id,
-            'tipocategoria': tipo.id,
+    def test_venda_adiciona_ao_saldo_online(self):
+        url = reverse('vendas-list')
+        payload = {
+            'valorTotal': '350.00',
+            'formapagamento': self.forma_pix.id
         }
-        resp_sai = self.client.post(url_sai, payload_sai, format='json')
-        self.assertEqual(resp_sai.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.usuario.refresh_from_db()
+        self.assertEqual(self.usuario.saldo_online, Decimal("1350.00"))
 
-    def test_compra_and_itemcompra_flow(self):
-        forma = FormaPagamento.objects.create(nome='PIX2')
-        tipo = TipoPagamento.objects.create(nome='CompraTipo')
-
-        url_compra = reverse('compras-list')
-        payload_compra = {
-            'descricao': 'Compra Teste',
-            'valorTotal': '0',
-            'formapagamento': forma.id,
-            'tipocategoria': tipo.id,
-            'desconto': '0',
-            'frete': '0',
+    def test_compra_subtrai_do_saldo_fisico(self):
+        url = reverse('compras-list')
+        payload = {
+            'valorTotal': '150.00',
+            'formapagamento': self.forma_dinheiro.id
         }
-        resp_compra = self.client.post(url_compra, payload_compra, format='json')
-        self.assertEqual(resp_compra.status_code, status.HTTP_201_CREATED)
-
-        compra_id = resp_compra.json()['id']
-
-        # Criar ItemCompra
-        item = Item.objects.create(nome='ItemComp', valor=5.00)
-        url_itemcomp = reverse('itemcompras-list')
-        payload_itemcomp = {
-            'item': item.id,
-            'compra': compra_id,
-            'quantidade': 2,
-            'valor_unitario': '5.00',
-        }
-        resp_itemcomp = self.client.post(url_itemcomp, payload_itemcomp, format='json')
-        self.assertEqual(resp_itemcomp.status_code, status.HTTP_201_CREATED)
-
-    def test_venda_and_produtovenda_flow(self):
-        forma = FormaPagamento.objects.create(nome='CartaoTeste')
-        tipo = TipoPagamento.objects.create(nome='VendaTipo')
-        cliente = Cliente.objects.create(nome='C V', email='cv@example.com', telefone='1', bairro='B', logradouro='L', numero='1')
-        produto = Produto.objects.create(nome='P1', valor=10.00, descricao='d')
-
-        url_venda = reverse('vendas-list')
-        payload_venda = {
-            'valorTotal': '0',
-            'formapagamento': forma.id,
-            'tipocategoria': tipo.id,
-            'desconto': '0',
-            'frete': '0',
-            'cliente': cliente.id,
-        }
-        resp_venda = self.client.post(url_venda, payload_venda, format='json')
-        self.assertEqual(resp_venda.status_code, status.HTTP_201_CREATED)
-
-        venda_id = resp_venda.json()['id']
-
-        url_prodv = reverse('produtovenda-list')
-        payload_prodv = {
-            'produto': produto.id,
-            'venda': venda_id,
-            'quantidade': 1,
-            'valor_unitario': '10.00',
-        }
-        resp_prodv = self.client.post(url_prodv, payload_prodv, format='json')
-        self.assertEqual(resp_prodv.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.usuario.refresh_from_db()
+        self.assertEqual(self.usuario.saldo_fisico, Decimal("850.00"))
