@@ -20,10 +20,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2. Sobe o banco e roda os testes com coverage dentro do container Docker
+      # 2. Sobe o banco e roda os testes com coverage apontando o arquivo de dados para a pasta /tmp
       - name: Run Tests and Generate Coverage
         run: |
-          docker compose run --rm web sh -c "coverage run --source='.' manage.py test && coverage xml"
+          docker compose run --rm -e COVERAGE_FILE=/tmp/.coverage web sh -c "coverage run --source='.' manage.py test && coverage xml -o coverage.xml --data-file=/tmp/.coverage"
 
       # 3. Executa o scanner do SonarQube puxando o coverage.xml gerado
       - name: SonarQube Scan
