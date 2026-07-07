@@ -1,0 +1,11 @@
+.env
+.env.local
+.git
+.github
+.venv
+__pycache__/
+postgres_data/
+db.sqlite3
+.coverage
+htmlcov/
+coverage.xml

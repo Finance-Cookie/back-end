@@ -16,16 +16,27 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / '.env')
+# CORREÇÃO: Só tenta ler o arquivo físico se ele existir localmente (fora do Docker)
+ENV_PATH = BASE_DIR / '.env'
+if ENV_PATH.exists():
+    load_dotenv(ENV_PATH)
+else:
+    # Se estiver no Docker, lê as variáveis de ambiente nativas injetadas pelo compose
+    load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-n9m0j-(eid7o881&#n-rff3tj%=whp5p8_l#!346w=(n%9j=aq')
+# SECURITY WARNING: keep the secret key used in production secret!
+# Se não encontrar no ambiente, gera um erro ou usa uma string vazia para travar e exigir a configuração
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("A variável de ambiente DJANGO_SECRET_KEY não foi definida!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
