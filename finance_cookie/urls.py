@@ -1,25 +1,22 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import (
-    ClienteViewSet, ProdutoViewSet, ItemViewSet, TipoPagamentoViewSet,
-    FormaPagamentoViewSet, EntradaViewSet, SaidaViewSet, CompraViewSet,
-    ItemCompraViewSet, VendaViewSet, ProdutoVendaViewSet, HistoricoViewSet, UsuarioViewSet
-)
+from rest_framework import routers
+from . import views
 
-router = DefaultRouter()
-router.register(r'usuarios', UsuarioViewSet, basename='usuarios')
-router.register(r'clientes', ClienteViewSet, basename='clientes')
-router.register(r'produtos', ProdutoViewSet, basename='produtos')
-router.register(r'itens', ItemViewSet, basename='itens')
-router.register(r'tipos-pagamento', TipoPagamentoViewSet, basename='tipos-pagamento')
-router.register(r'formas-pagamento', FormaPagamentoViewSet, basename='formas-pagamento')
-router.register(r'entradas', EntradaViewSet, basename='entradas')
-router.register(r'saidas', SaidaViewSet, basename='saidas')
-router.register(r'compras', CompraViewSet, basename='compras')
-router.register(r'itens-compra', ItemCompraViewSet, basename='itens-compra')
-router.register(r'vendas', VendaViewSet, basename='vendas')
-router.register(r'produtos-venda', ProdutoVendaViewSet, basename='produtos-venda')
-router.register(r'historicos', HistoricoViewSet, basename='historicos')
+router = routers.DefaultRouter()
+router.register(r'clientes', views.ClienteViewSet, basename='clientes')
+router.register(r'produtos', views.ProdutoViewSet, basename='produtos')
+router.register(r'items', views.ItemViewSet, basename='items')
+router.register(r'tipos', views.TipoPagamentoViewSet, basename='tipospagamento')
+router.register(r'formas', views.FormaPagamentoViewSet, basename='formaspagamento')
+router.register(r'entradas', views.EntradaViewSet, basename='entradas')
+router.register(r'saidas', views.SaidaViewSet, basename='saidas')
+router.register(r'compras', views.CompraViewSet, basename='compras')
+router.register(r'itemcompras', views.ItemCompraViewSet, basename='itemcompras')
+router.register(r'vendas', views.VendaViewSet, basename='vendas')
+router.register(r'produtovenda', views.ProdutoVendaViewSet, basename='produtovenda')
+router.register(r'relatorios', views.RelatorioViewSet, basename='relatorios')
+router.register(r'historico', views.HistoricoViewSet, basename='historico')
+router.register(r'usuarios', views.UsersViewSet, basename='usuarios')
 
 urlpatterns = [
     path('', include(router.urls)),

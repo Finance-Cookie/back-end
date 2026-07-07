@@ -1,4 +1,5 @@
 [run]
+relative_files = True
 omit =
     *apps.py
     *migrations*
@@ -6,6 +7,3 @@ omit =
     manage.py
     config/*
     *api_views.py
-
-[xml]
-relative_files = True
