@@ -242,3 +242,22 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.nome
+
+class Historico(models.Model):
+    TIPO_CHOICES = [
+        ("ENTRADA", "Entrada"),
+        ("SAIDA", "Saída"),
+        ("VENDA", "Venda"),
+        ("COMPRA", "Compra"),
+        ("PRODUTO", "Produto"),
+        ("CLIENTE", "Cliente"),
+    ]
+
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    descricao = models.CharField(max_length=255)
+    data = models.DateTimeField(auto_now_add=True)
+
+    referencia_id = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.descricao}"

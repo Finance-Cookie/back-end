@@ -12,6 +12,7 @@ from .models import (
     Venda,
     ProdutoVenda,
     Usuario,
+    Historico,
 )
 
 from django.contrib.auth.hashers import make_password
@@ -129,6 +130,11 @@ class VendaSerializer(serializers.ModelSerializer):
         model = Venda
         fields = '__all__'
 
+class HistoricoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Historico
+        fields = "__all__"
+        
 class UsuarioSerializer(serializers.ModelSerializer):
     senha = serializers.CharField(write_only=True, required=False)
 
